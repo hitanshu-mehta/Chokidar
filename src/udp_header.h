@@ -1,6 +1,7 @@
 #ifndef UDP_HEADER_H
 #define UDP_HEADER_H
 
+#include "constants.h"
 #include <netinet/in.h>
 
 /*
@@ -23,12 +24,10 @@ Taken from RFC 768
 
 class udp_header
 {
-	using port_t = uint16_t;
-	using addr_t = uint32_t;
 
 private:
-	port_t src_port;
-	port_t dst_port;
+	net::port_t src_port;
+	net::port_t dst_port;
 	uint16_t length;
 	uint16_t checksum;
 };

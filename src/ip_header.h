@@ -1,7 +1,9 @@
 #ifndef IP_HEADER_H
 #define IP_HEADER_H
 
+#include "constants.h"
 #include <netinet/in.h>
+
 /*
  * structure of ip header.
  * Taken from RFC 791's protocol specification
@@ -34,8 +36,6 @@
 
 class ip_header
 {
-	using addr_t = uint32_t;
-	using port_t = uint16_t;
 
 private:
 	uint8_t ver_ihl; // 4 bits version and 4 bits internet header length
@@ -46,8 +46,8 @@ private:
 	uint8_t ttl;
 	uint8_t protocol;
 	uint16_t checksum;
-	addr_t src_addr;
-	addr_t dst_addr;
+	net::addr_t src_addr;
+	net::addr_t dst_addr;
 
 	/* ver_ihl is 8 bits long and ihl is 4 bit. so ANDing xxxxyyyy & 00001111 gives yyyy which is ihl */
 	uint8_t ihl() const { return (ver_ihl & 0x0F); }

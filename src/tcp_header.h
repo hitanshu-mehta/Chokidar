@@ -1,6 +1,7 @@
 #ifndef TCP_HEADER_H
 #define TCP_HEADER_H
 
+#include "constants.h"
 #include <netinet/in.h>
 
 /*
@@ -25,25 +26,26 @@
 
 class tcp_header
 {
-	using port_t = uint16_t;
 
 private:
-	port_t src_port; /* source port */
-	port_t dst_port; /* destination port */
-	uint32_t seq_no; /* sequence  number */
-	uint32_t ack_no; /* acknowledgment number */
-	u_char offx2;	 /* data offset and reserved (10 bits) */
-	u_char flags;	 /* flags */
+	net::port_t src_port; /* source port */
+	net::port_t dst_port; /* destination port */
+	uint32_t seq_no;	  /* sequence  number */
+	uint32_t ack_no;	  /* acknowledgment number */
+	u_char offx2;		  /* data offset and reserved (10 bits) */
+	u_char flags;		  /* flags */
 
-#define TH_FIN 0x01
-#define TH_SYN 0x02
-#define TH_RST 0x04
-#define TH_PUSH 0x08
-#define TH_ACK 0x10
-#define TH_URG 0x20
-#define TH_ECE 0x40
-#define TH_CWR 0x80
-#define TH_FLAGS (TH_FIN | TH_SYN | TH_RST | TH_ACK | TH_URG | TH_ECE | TH_CWR)
+	static constexpr uint8_t TH_FIN{0x01};
+	static constexpr uint8_t TH_SYN{0x02};
+	static constexpr uint8_t TH_RST{0x04};
+	static constexpr uint8_t TH_PUSH{0x08};
+	static constexpr uint8_t TH_ACK{0x10};
+	static constexpr uint8_t TH_URG{0x20};
+	static constexpr uint8_t TH_ECE{0x40};
+	static constexpr uint8_t TH_CWR{0x80};
+	static constexpr uint8_t TH_FLAGS =
+		(TH_FIN | TH_SYN | TH_RST | TH_ACK | TH_URG | TH_ECE | TH_CWR);
+
 	uint16_t win;	   /* window */
 	uint16_t checksum; /* checksum */
 	uint16_t urg_ptr;  /* urgent pointer */
