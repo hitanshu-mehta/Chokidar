@@ -2,7 +2,7 @@
 #define TCP_HEADER_H
 
 #include "constants.h"
-#include <netinet/in.h>
+#include <cstdint>
 
 /*
 *        0                   1                   2                   3
@@ -24,32 +24,28 @@
 *
 */
 
-class tcp_header
-{
+/* TCP header */
 
-private:
-	net::port_t src_port; /* source port */
-	net::port_t dst_port; /* destination port */
-	uint32_t seq_no;	  /* sequence  number */
-	uint32_t ack_no;	  /* acknowledgment number */
-	u_char offx2;		  /* data offset and reserved (10 bits) */
-	u_char flags;		  /* flags */
-
-	static constexpr uint8_t TH_FIN{0x01};
-	static constexpr uint8_t TH_SYN{0x02};
-	static constexpr uint8_t TH_RST{0x04};
-	static constexpr uint8_t TH_PUSH{0x08};
-	static constexpr uint8_t TH_ACK{0x10};
-	static constexpr uint8_t TH_URG{0x20};
-	static constexpr uint8_t TH_ECE{0x40};
-	static constexpr uint8_t TH_CWR{0x80};
-	static constexpr uint8_t TH_FLAGS =
-		(TH_FIN | TH_SYN | TH_RST | TH_ACK | TH_URG | TH_ECE | TH_CWR);
-
-	uint16_t win;	   /* window */
-	uint16_t checksum; /* checksum */
-	uint16_t urg_ptr;  /* urgent pointer */
-	u_char off() const { return ((offx2 & 0xF0) >> 4); }
+struct tcp_header {
+	u_short th_sport; /* source port */
+	u_short th_dport; /* destination port */
+	uint32_t th_seq;  /* sequence number */
+	uint32_t th_ack;  /* acknowledgement number */
+	uint8_t th_offx2; /* data offset, rsvd */
+#define TH_OFF(th) (((th)->th_offx2 & 0xf0) >> 4)
+	uint8_t th_flags;
+#define TH_FIN 0x01
+#define TH_SYN 0x02
+#define TH_RST 0x04
+#define TH_PUSH 0x08
+#define TH_ACK 0x10
+#define TH_URG 0x20
+#define TH_ECE 0x40
+#define TH_CWR 0x80
+#define TH_FLAGS (TH_FIN | TH_SYN | TH_RST | TH_ACK | TH_URG | TH_ECE | TH_CWR)
+	uint16_t th_win; /* window */
+	uint16_t th_sum; /* checksum */
+	uint16_t th_urp; /* urgent pointer */
 };
 
 #endif

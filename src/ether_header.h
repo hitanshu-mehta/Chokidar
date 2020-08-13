@@ -2,13 +2,13 @@
 #define ETHER_HEADER_H
 
 #include "constants.h"
-#include <netinet/in.h>
+#include <cstdint>
 
-class ether_header
-{
-private:
-	uint8_t dst_addr[6]; /* destination MAC addresss (6 bytes) */
-	uint8_t src_addr[6]; /* source MAC address (6 bytes) */
+/* Ethernet header */
+struct ether_header {
+	uint8_t ether_dhost[net::ether_address_len]; /* Destination host address */
+	uint8_t ether_shost[net::ether_address_len]; /* Source host address */
+	uint16_t ether_type;						 /* IP? ARP? RARP? etc */
 };
 
 #endif

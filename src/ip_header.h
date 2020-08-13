@@ -2,7 +2,7 @@
 #define IP_HEADER_H
 
 #include "constants.h"
-#include <netinet/in.h>
+#include <cstdint>
 
 /*
  * structure of ip header.
@@ -34,27 +34,23 @@
  * 
  */
 
-class ip_header
-{
-
-private:
-	uint8_t ver_ihl; // 4 bits version and 4 bits internet header length
-	uint8_t tos;
-	uint16_t total_length;
-	uint16_t id;
-	uint16_t flags_fo; // 3 bits flags and 13 bits fragment-offset
-	uint8_t ttl;
-	uint8_t protocol;
-	uint16_t checksum;
-	net::addr_t src_addr;
-	net::addr_t dst_addr;
-
-	/* ver_ihl is 8 bits long and ihl is 4 bit. so ANDing xxxxyyyy & 00001111 gives yyyy which is ihl */
-	uint8_t ihl() const { return (ver_ihl & 0x0F); }
-
-	size_t size() const { return ihl() * sizeof(uint32_t); }
-
-public:
+/* IP header */
+struct ip_header {
+	uint8_t ip_vhl;				   /* version << 4 | header length >> 2 */
+	uint8_t ip_tos;				   /* type of service */
+	uint16_t ip_len;			   /* total length */
+	uint16_t ip_id;				   /* identification */
+	uint16_t ip_off;			   /* fragment offset field */
+#define IP_RF 0x8000			   /* reserved fragment flag */
+#define IP_DF 0x4000			   /* dont fragment flag */
+#define IP_MF 0x2000			   /* more fragments flag */
+#define IP_OFFMASK 0x1fff		   /* mask for fragmenting bits */
+	uint8_t ip_ttl;				   /* time to live */
+	uint8_t ip_p;				   /* protocol */
+	uint16_t ip_sum;			   /* checksum */
+	struct in_addr ip_src, ip_dst; /* source and dest address */
 };
+#define IP_HL(ip) (((ip)->ip_vhl) & 0x0f)
+#define IP_V(ip) (((ip)->ip_vhl) >> 4)
 
 #endif
