@@ -3,6 +3,7 @@
 
 #include "constants.h"
 #include <cstdint>
+#include <netinet/in.h>
 
 /*
  * structure of ip header.

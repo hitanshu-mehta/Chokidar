@@ -1,6 +1,12 @@
 #include "packet_capture.h"
 #include "packet_parser.h"
 
+packet_capture::packet_capture(char* filter_exp, int num_pkts, int t_out, bool is_promiscious)
+	: filter_exp(filter_exp)
+	, num_packets(num_pkts)
+	, timeout(t_out)
+	, ispromiscious(is_promiscious){};
+
 char* packet_capture::find_dev() {
 	this->dev = pcap_lookupdev(this->errbuf);
 	return dev;
@@ -13,9 +19,15 @@ pcap_t* packet_capture::find_handle() {
 	return this->handle;
 }
 
-void set_filter() { }
+void packet_capture::set_filter(char* flt_exp) { filter_exp = flt_exp; }
 
-void packet_capture::get_net_num_and_mask() {
+void packet_capture::set_timeout(int time) { timeout = time; }
+
+void packet_capture::set_num_packets(int num_pkts) { num_packets = num_pkts; }
+
+char* const packet_capture::get_errbuf() { return errbuf; };
+
+void const packet_capture::get_net_num_and_mask() {
 	if(pcap_lookupnet(dev, &net, &mask, errbuf) == -1) {
 		fprintf(stderr, "Couldn't get netmask for device %s: %s\n", dev, errbuf);
 		net = 0;
@@ -23,18 +35,17 @@ void packet_capture::get_net_num_and_mask() {
 	}
 }
 
-bool packet_capture::is_ethernet_handle() { return (pcap_datalink(handle) == DLT_EN10MB); }
+char* const packet_capture::get_dev() { return dev; }
 
-void packet_capture::compile_filter_expression() {
-	if(pcap_compile(handle, &fp, filter_exp, 0, net) == -1) {
-		fprintf(stderr, "Couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
-	}
+pcap_t* const packet_capture::get_handle() { return handle; }
+
+bool const packet_capture::is_ethernet_handle() { return (pcap_datalink(handle) == DLT_EN10MB); }
+
+int packet_capture::compile_filter_expression() {
+	return pcap_compile(handle, &fp, filter_exp, 0, net);
 }
-void packet_capture::apply_filter() {
-	if(pcap_setfilter(handle, &fp) == -1) {
-		fprintf(stderr, "Couldn't install filter %s: %s\n", filter_exp, pcap_geterr(handle));
-	}
-}
+
+int packet_capture::apply_filter() { return pcap_setfilter(handle, &fp); }
 
 /* TO CHANGE */
 void packet_capture::got_packet(u_char* args,

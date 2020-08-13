@@ -2,7 +2,7 @@
 #define UDP_HEADER_H
 
 #include "constants.h"
-#include <netinet/in.h>
+#include <cstdint>
 
 /*
 Taken from RFC 768
@@ -21,15 +21,11 @@ Taken from RFC 768
 
             User Datagram Header Format
 */
+struct udp_header {
 
-class udp_header
-{
-
-private:
-	net::port_t src_port;
-	net::port_t dst_port;
-	uint16_t length;
-	uint16_t checksum;
+	uint16_t srcport;
+	uint16_t destport;
+	uint16_t len;
+	uint16_t chksum;
 };
-
 #endif

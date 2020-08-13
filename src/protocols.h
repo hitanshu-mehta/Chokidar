@@ -9,10 +9,10 @@
 class protocols
 {
 private:
-	ip_header* ip;
-	udp_header* udp;
-	tcp_header* tcp;
-	ether_header* ether;
+	const struct ether_header* ether;
+	const struct ip_header* ip;
+	const struct tcp_header* tcp;
+	const struct udp_header* udp;
 
 public:
 	protocols() {
@@ -22,10 +22,14 @@ public:
 		ether = new ether_header;
 	}
 
-	ip_header* get_ip() { return ip; }
-	ether_header* get_ether() { return ether; }
-	udp_header* get_udp() { return udp; }
-	tcp_header* get_tcp() { return tcp; }
+	const ip_header* get_ip() { return ip; }
+	const ether_header* get_ether() { return ether; }
+	const udp_header* get_udp() { return udp; }
+	const tcp_header* get_tcp() { return tcp; }
+	// void set_ether(struct ether_header* ether_h) { ether = ether_h; }
+	// void set_ip(struct ip_header* ip_h) { ip = ip_h; }
+	// void set_tcp(struct tcp_header* tcp_h) { tcp = tcp_h; }
+	// void set_udp(struct udp_header* udp_h) { udp = udp_h; }
 };
 
 #endif

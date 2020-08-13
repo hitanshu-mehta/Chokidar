@@ -1,7 +1,6 @@
 #include "packet_parser.h"
+
 #include <arpa/inet.h>
-#include <bitset>
-#include <cstdio>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
@@ -28,6 +27,12 @@ bool packet_parser::set_tcp() {
 	return (size_tcp >= 20);
 }
 
+bool packet_parser::set_udp() {
+	if(ip->ip_p != IPPROTO_UDP) return false;
+	udp = (struct udp_header*)(packet + net::size_ethernet + size_ip);
+	return true;
+}
+
 void packet_parser::set_header(const struct pcap_pkthdr* header) { this->header = header; }
 
 void packet_parser::set_args(uint8_t* args) { this->args = args; }
@@ -38,28 +43,55 @@ const struct tcp_header* const packet_parser::get_tcp() { return tcp; }
 const struct ip_header* const packet_parser::get_ip() { return ip; }
 const struct ether_header* const packet_parser::get_ether() { return ether; }
 
+bool packet_parser::handle_tcp(net::port_t* s_port, net::port_t* d_port) {
+	if(!set_tcp()) return false;
+	*s_port = (net::port_t)(tcp->th_sport);
+	*d_port = (net::port_t)(tcp->th_dport);
+	return true;
+}
+
+bool packet_parser::handle_udp(net::port_t* s_port, net::port_t* d_port) {
+	if(!set_udp()) return false;
+	*s_port = (net::port_t)(udp->srcport);
+	*d_port = (net::port_t)(udp->destport);
+	return true;
+}
 bool packet_parser::parse() {
 	set_ether();
-	fprintf(stderr, "Packet count: %lld\n", ++count);
-	fprintf(stderr, "Parsing...\n");
-	fprintf(stderr, "Ethernet\n");
-	// std::bitset<16> ed(ether->ether_dhost);
-	// std::bitset<16> es(ether->ether_shost);
-	// fprintf(stderr, "Destination host: %s\n", );
-	// fprintf(stderr, "Source host: %s\n", ed.to_string());
+
 	if(!set_ip()) {
 		fprintf(stderr, "invalid ip\n");
 		return false;
 	}
-	fprintf(stderr, "\tIP\n");
-	fprintf(stderr, "\tDestination ip: %s\n", inet_ntoa(ip->ip_dst));
-	fprintf(stderr, "\tSource ip: %s\n", inet_ntoa(ip->ip_src));
-	if(!set_tcp()) {
-		fprintf(stderr, "invalid tcp\n");
-		return false;
+	in_addr s_ip = ip->ip_src, d_ip = ip->ip_dst;
+	int protocol = ip->ip_p;
+	long timestamp = header->ts.tv_sec;
+	net::port_t s_port, d_port;
+
+	bool captured = true;
+	switch(ip->ip_p) {
+	case IPPROTO_TCP:
+		captured = handle_tcp(&s_port, &d_port);
+		// printf("   Protocol: TCP\n");
+		break;
+	case IPPROTO_UDP:
+		captured = handle_udp(&s_port, &d_port);
+		// printf("   Protocol: UDP\n");
+		break;
+	// case IPPROTO_ICMP:
+	// 	printf("   Protocol: ICMP\n");
+	// 	return;
+	// case IPPROTO_IP:
+	// 	printf("   Protocol: IP\n");
+	// 	return;
+	default:
+		captured = false;
+		return;
 	}
-	fprintf(stderr, "\t\tTCP\n");
-	fprintf(stderr, "\t\tDestination port: %d\n", ntohs(tcp->th_dport));
-	fprintf(stderr, "\t\tSource port: %d\n", ntohs(tcp->th_sport));
-	return true;
+	if(captured) {
+		basic_packet_info* basic_pkt =
+			new basic_packet_info(s_ip, d_ip, s_port, d_port, protocol, timestamp);
+	}
+
+	return captured;
 }
