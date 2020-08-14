@@ -39,6 +39,8 @@ void packet_parser::set_args(uint8_t* args) { this->args = args; }
 
 void packet_parser::set_packet(const uint8_t* packet) { this->packet = packet; }
 
+std::vector<basic_packet_info> packet_parser::get_basic_pkts() { return basic_pkts; }
+
 const struct tcp_header* const packet_parser::get_tcp() { return tcp; }
 const struct ip_header* const packet_parser::get_ip() { return ip; }
 const struct ether_header* const packet_parser::get_ether() { return ether; }
@@ -56,6 +58,7 @@ bool packet_parser::handle_udp(net::port_t* s_port, net::port_t* d_port) {
 	*d_port = (net::port_t)(udp->destport);
 	return true;
 }
+
 bool packet_parser::parse() {
 	set_ether();
 
@@ -71,12 +74,12 @@ bool packet_parser::parse() {
 	bool captured = true;
 	switch(ip->ip_p) {
 	case IPPROTO_TCP:
-		captured = handle_tcp(&s_port, &d_port);
 		// printf("   Protocol: TCP\n");
+		captured = handle_tcp(&s_port, &d_port);
 		break;
 	case IPPROTO_UDP:
-		captured = handle_udp(&s_port, &d_port);
 		// printf("   Protocol: UDP\n");
+		captured = handle_udp(&s_port, &d_port);
 		break;
 	// case IPPROTO_ICMP:
 	// 	printf("   Protocol: ICMP\n");
@@ -85,12 +88,10 @@ bool packet_parser::parse() {
 	// 	printf("   Protocol: IP\n");
 	// 	return;
 	default:
-		captured = false;
-		return;
+		return captured = false;
 	}
 	if(captured) {
-		basic_packet_info* basic_pkt =
-			new basic_packet_info(s_ip, d_ip, s_port, d_port, protocol, timestamp);
+		basic_pkts.push_back(basic_packet_info(s_ip, d_ip, s_port, d_port, protocol, timestamp));
 	}
 
 	return captured;

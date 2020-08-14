@@ -1,5 +1,10 @@
 #include "packet_capture.h"
-#include "packet_parser.h"
+
+packet_capture::packet_capture() {
+	int num_packets = 30;
+	bool ispromiscious = 1;
+	int timeout = 1000;
+}
 
 packet_capture::packet_capture(char* filter_exp, int num_pkts, int t_out, bool is_promiscious)
 	: filter_exp(filter_exp)
@@ -8,7 +13,9 @@ packet_capture::packet_capture(char* filter_exp, int num_pkts, int t_out, bool i
 	, ispromiscious(is_promiscious){};
 
 char* packet_capture::find_dev() {
-	this->dev = pcap_lookupdev(this->errbuf);
+	if(pcap_findalldevs(&alldevs, this->errbuf) == 0)
+		if(alldevs == NULL) return dev = nullptr;
+	dev = alldevs->name;
 	return dev;
 }
 
@@ -38,6 +45,10 @@ void const packet_capture::get_net_num_and_mask() {
 char* const packet_capture::get_dev() { return dev; }
 
 pcap_t* const packet_capture::get_handle() { return handle; }
+
+std::vector<basic_packet_info> const packet_capture::get_basic_pkts_from_parser() {
+	return parser.get_basic_pkts();
+}
 
 bool const packet_capture::is_ethernet_handle() { return (pcap_datalink(handle) == DLT_EN10MB); }
 

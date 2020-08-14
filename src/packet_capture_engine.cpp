@@ -54,6 +54,10 @@ int packet_capture_engine(char* filter_exp = "ip",
 	/* now we can start sniffing */
 	capture.sniff();
 
+	/* get iterator of basic packet info vector of captured packets */
+	std::vector<basic_packet_info> ptr = capture.get_basic_pkts_from_parser();
+	for(auto& ele : ptr) { ele.print_all_info(); }
+
 	printf("\nCapture complete.\n");
 	return 0;
 }

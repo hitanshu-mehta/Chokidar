@@ -23,7 +23,7 @@ private:
 	uint8_t* args;
 	uint size_ip;
 	uint size_tcp;
-	std::vector<basic_packet_info*> basic_pkts;
+	std::vector<basic_packet_info> basic_pkts;
 
 public:
 	packet_parser(){};
@@ -33,6 +33,7 @@ public:
 	bool set_tcp();
 	bool set_udp();
 
+	std::vector<basic_packet_info> get_basic_pkts();
 	const struct tcp_header* const get_tcp();
 	const struct ip_header* const get_ip();
 	const struct ether_header* const get_ether();
