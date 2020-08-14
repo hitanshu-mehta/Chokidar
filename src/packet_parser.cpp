@@ -1,6 +1,8 @@
 #include "packet_parser.h"
 
 #include <arpa/inet.h>
+#include <bitset>
+#include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
@@ -45,17 +47,30 @@ const struct tcp_header* const packet_parser::get_tcp() { return tcp; }
 const struct ip_header* const packet_parser::get_ip() { return ip; }
 const struct ether_header* const packet_parser::get_ether() { return ether; }
 
-bool packet_parser::handle_tcp(net::port_t* s_port, net::port_t* d_port) {
+bool packet_parser::handle_tcp(basic_packet_info* pkt) {
 	if(!set_tcp()) return false;
-	*s_port = (net::port_t)(tcp->th_sport);
-	*d_port = (net::port_t)(tcp->th_dport);
+	pkt->set_src_port((net::port_t)(tcp->th_sport));
+	pkt->set_dst_port((net::port_t)(tcp->th_dport));
+	std::bitset<8> fs(tcp->th_flags);
+	// std::cerr << "Flags :" << fs.to_string() << std::endl;
+
+	pkt->set_flagFIN(tcp->th_flags & TH_FIN);
+	pkt->set_flagPSH(tcp->th_flags & TH_PUSH);
+	pkt->set_flagURG(tcp->th_flags & TH_URG);
+	pkt->set_flagECE(tcp->th_flags & TH_ECE);
+	pkt->set_flagSYN(tcp->th_flags & TH_SYN);
+	pkt->set_flagACK(tcp->th_flags & TH_ACK);
+	pkt->set_flagCWR(tcp->th_flags & TH_CWR);
+	pkt->set_flagRST(tcp->th_flags & TH_RST);
+	pkt->set_TCPwindow(tcp->th_win);
+
 	return true;
 }
 
-bool packet_parser::handle_udp(net::port_t* s_port, net::port_t* d_port) {
+bool packet_parser::handle_udp(basic_packet_info* pkt) {
 	if(!set_udp()) return false;
-	*s_port = (net::port_t)(udp->srcport);
-	*d_port = (net::port_t)(udp->destport);
+	pkt->set_src_port(udp->srcport);
+	pkt->set_dst_port(udp->destport);
 	return true;
 }
 
@@ -66,20 +81,21 @@ bool packet_parser::parse() {
 		fprintf(stderr, "invalid ip\n");
 		return false;
 	}
-	in_addr s_ip = ip->ip_src, d_ip = ip->ip_dst;
-	int protocol = ip->ip_p;
-	long timestamp = header->ts.tv_sec;
-	net::port_t s_port, d_port;
+	basic_packet_info pkt;
+	pkt.set_ip_src(ip->ip_src);
+	pkt.set_ip_dst(ip->ip_dst);
+	pkt.set_protocol(ip->ip_p);
+	pkt.set_timestamp(header->ts.tv_sec);
 
 	bool captured = true;
 	switch(ip->ip_p) {
 	case IPPROTO_TCP:
 		// printf("   Protocol: TCP\n");
-		captured = handle_tcp(&s_port, &d_port);
+		captured = handle_tcp(&pkt);
 		break;
 	case IPPROTO_UDP:
 		// printf("   Protocol: UDP\n");
-		captured = handle_udp(&s_port, &d_port);
+		captured = handle_udp(&pkt);
 		break;
 	// case IPPROTO_ICMP:
 	// 	printf("   Protocol: ICMP\n");
@@ -90,9 +106,7 @@ bool packet_parser::parse() {
 	default:
 		return captured = false;
 	}
-	if(captured) {
-		basic_pkts.push_back(basic_packet_info(s_ip, d_ip, s_port, d_port, protocol, timestamp));
-	}
+	if(captured) { basic_pkts.push_back(pkt); }
 
 	return captured;
 }

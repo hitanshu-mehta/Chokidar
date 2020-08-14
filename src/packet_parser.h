@@ -42,8 +42,8 @@ public:
 	void set_packet(const uint8_t*);
 	void set_args(uint8_t*);
 
-	bool handle_tcp(net::port_t*, net::port_t*);
-	bool handle_udp(net::port_t*, net::port_t*);
+	bool handle_tcp(basic_packet_info*);
+	bool handle_udp(basic_packet_info*);
 
 	bool parse();
 };

@@ -42,7 +42,7 @@ struct tcp_header {
 #define TH_URG 0x20
 #define TH_ECE 0x40
 #define TH_CWR 0x80
-#define TH_FLAGS (TH_FIN | TH_SYN | TH_RST | TH_ACK | TH_URG | TH_ECE | TH_CWR)
+#define TH_FLAGS (TH_FIN | TH_SYN | TH_RST | TH_PUSH | TH_ACK | TH_URG | TH_ECE | TH_CWR)
 	uint16_t th_win; /* window */
 	uint16_t th_sum; /* checksum */
 	uint16_t th_urp; /* urgent pointer */

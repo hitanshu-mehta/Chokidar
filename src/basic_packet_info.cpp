@@ -8,7 +8,9 @@ basic_packet_info::basic_packet_info(
 	, src_port(src_pt)
 	, dst_port(dst_pt)
 	, protocol(proto)
-	, timestamp(ts){};
+	, timestamp(ts){
+
+	  };
 
 void const basic_packet_info::print_all_info() {
 	fprintf(stderr, "|-----------------Packet Info----------------|\n");
@@ -18,4 +20,6 @@ void const basic_packet_info::print_all_info() {
 	fprintf(stderr, "Destination port: %d\n", ntohs(dst_port));
 	fprintf(stderr, "Protocol: %d\n", protocol);
 	fprintf(stderr, "Timestamp: %ld\n", timestamp);
+	fprintf(stderr, "TCP window: %d\n", TCPwindow);
+	// fprintf(stderr, "Flags %d\n", all_flags);
 }
