@@ -11,6 +11,17 @@
 #include <string>
 #include <vector>
 
+class mutable_int
+{
+private:
+	int val = 0;
+
+public:
+	mutable_int() { this->val = 0; }
+	void increment() { this->val++; }
+	int const get() { return this->val; }
+};
+
 class basic_flow
 {
 private:
@@ -89,7 +100,7 @@ private:
 public:
 	void init_parameters();
 	void init_flags();
-	basic_flow(); // to do
+	basic_flow() { }
 	basic_flow(bool, basic_packet_info, in_addr, in_addr, net::port_t, net::port_t, long);
 	basic_flow(bool, basic_packet_info, long);
 
@@ -119,6 +130,7 @@ public:
 	long get_bavg_bytes_per_bulk();
 	long get_bavg_packets_per_bulk();
 	double get_fbulk_duration_seconds();
+	double get_bbulk_duration_seconds();
 	long get_favg_bulk_rate();
 	long get_bavg_bulk_rate();
 
@@ -129,15 +141,5 @@ public:
 };
 
 /* --------------------- */
-class mutable_int
-{
-private:
-	int val = 0;
-
-public:
-	mutable_int() { this->val = 0; }
-	void increment() { this->val++; }
-	int const get() { return this->val; }
-};
 
 #endif

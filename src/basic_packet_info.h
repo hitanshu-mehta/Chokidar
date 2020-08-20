@@ -2,6 +2,8 @@
 #define BASIC_PACKET_INFO
 
 #include "constants.h"
+#include "utils.h"
+
 #include <cstdint>
 #include <netinet/in.h>
 #include <string>
@@ -11,13 +13,13 @@ class basic_packet_info
 
 private:
 	long id = -1;
-	in_addr ip_src;
-	in_addr ip_dst;
+	in_addr src;
+	in_addr dst;
 	net::port_t src_port;
 	net::port_t dst_port;
 	int protocol;
-	long timestamp;
-	long payload_bytes;
+	long timestamp;		// not set
+	long payload_bytes; // not set
 	std::string flowid = "";
 	int all_flags = 0;
 	/* --------------------  */
@@ -30,8 +32,8 @@ private:
 	bool flagCWR = false;
 	bool flagRST = false;
 	int tcp_window = 0;
-	long header_bytes;
-	int payload_packet = 0;
+	long header_bytes;		// not set
+	int payload_packet = 0; // not set
 
 public:
 	basic_packet_info(){};
@@ -47,23 +49,22 @@ public:
 	bool has_RST() { return flagRST; }
 
 	long const get_id() { return this->id; }
-	in_addr const get_ip_src() { return this->ip_src; }
-	in_addr const get_ip_dst() { return this->ip_dst; };
-	net::port_t const get_src_port();
-	net::port_t const get_dst_port();
-	long const get_timestamp() { return timestamp; };
-	std::string get_fwd_flow_id(); // to define
-	std::string get_bwd_flow_id(); // to define
-	std::string generate_id();	   // to define
-	std::string get_flow_id();	   // to define
+	in_addr const get_src() { return this->src; }
+	in_addr const get_dst() { return this->dst; };
+	net::port_t const get_src_port() { return this->src_port; }
+	net::port_t const get_dst_port() { return this->dst_port; }
+	std::string get_fwd_flow_id();
+	std::string get_bwd_flow_id();
+	std::string get_flow_id(); // to define
 	int const get_tcp_window() { return this->tcp_window; }
 	long const get_header_bytes() { return this->header_bytes; }
 	long const get_timestamp() { return this->timestamp; }
 	long const get_payload_bytes() { return this->payload_bytes; }
 	int const get_protocol() { return this->protocol; }
 
-	void set_ip_src(in_addr ip_src) { this->ip_src = ip_src; }
-	void set_ip_dst(in_addr ip_dst) { this->ip_dst = ip_dst; }
+	void set_id() { this->id = utils::id++; }
+	void set_src(in_addr src) { this->src = src; }
+	void set_dst(in_addr dst) { this->dst = dst; }
 	void set_src_port(net::port_t src_port) { this->src_port = src_port; }
 	void set_dst_port(net::port_t dst_port) { this->dst_port = dst_port; }
 	void set_protocol(int protocol) { this->protocol = protocol; }

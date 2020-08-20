@@ -82,8 +82,8 @@ bool packet_parser::parse() {
 		return false;
 	}
 	basic_packet_info pkt;
-	pkt.set_ip_src(ip->ip_src);
-	pkt.set_ip_dst(ip->ip_dst);
+	pkt.set_src(ip->ip_src);
+	pkt.set_dst(ip->ip_dst);
 	pkt.set_protocol(ip->ip_p);
 	pkt.set_timestamp(header->ts.tv_sec);
 
@@ -106,7 +106,10 @@ bool packet_parser::parse() {
 	default:
 		return captured = false;
 	}
-	if(captured) { basic_pkts.push_back(pkt); }
+	if(captured) {
+		pkt.set_id();
+		basic_pkts.push_back(pkt);
+	}
 
 	return captured;
 }

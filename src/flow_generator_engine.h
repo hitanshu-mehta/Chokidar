@@ -4,6 +4,6 @@
 #include "basic_packet_info.h"
 #include "flow_generator.h"
 
-void flow_generator_engine(long, long, int, std::vector<basic_packet_info>&);
+void flow_generator_engine(long, long, int, std::string, std::vector<basic_packet_info>&);
 
 #endif

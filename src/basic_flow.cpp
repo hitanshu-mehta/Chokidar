@@ -1,5 +1,8 @@
 #include "basic_flow.h"
 #include <arpa/inet.h>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 #include <sstream>
 
 basic_flow::basic_flow(bool is_bidirectional,
@@ -65,38 +68,38 @@ void basic_flow::init_flags() {
 }
 
 double basic_flow::get_fpkts_per_second() {
-	long duration = this->flowLastSeen - this->flowStartTime;
+	long duration = this->flow_last_seen - this->flow_start_time;
 	if(duration > 0) { return (this->forward.size() / ((double)duration / 1000000L)); }
 	else
 		return 0;
 }
 
 double basic_flow::get_bpkts_per_second() {
-	long duration = this->flowLastSeen - this->flowStartTime;
+	long duration = this->flow_last_seen - this->flow_start_time;
 	if(duration > 0) { return (this->backward.size() / ((double)duration / 1000000L)); }
 	else
 		return 0;
 }
 
-double basic_flow::get_favg_bytes_per_bulk() {
+long basic_flow::get_favg_bytes_per_bulk() {
 	if(this->fbulk_state_count != 0)
 		return (this->fbulk_size_total / (double)this->fbulk_state_count);
 	return 0;
 }
 
-double basic_flow::get_favg_packets_per_bulk() {
+long basic_flow::get_favg_packets_per_bulk() {
 	if(this->fbulk_state_count != 0)
 		return (this->fbulk_packet_count / (double)this->fbulk_state_count);
 	return 0;
 }
 
-double basic_flow::get_bavg_bytes_per_bulk() {
+long basic_flow::get_bavg_bytes_per_bulk() {
 	if(this->bbulk_state_count != 0)
 		return (this->bbulk_size_total / (double)this->bbulk_state_count);
 	return 0;
 }
 
-double basic_flow::get_bavg_packets_per_bulk() {
+long basic_flow::get_bavg_packets_per_bulk() {
 	if(this->bbulk_state_count != 0)
 		return (this->bbulk_packet_count / (double)this->bbulk_state_count);
 	return 0;
@@ -147,12 +150,12 @@ void basic_flow::first_packet(basic_packet_info packet) {
 	this->start_active_time = packet.get_timestamp();
 	this->end_active_time = packet.get_timestamp();
 	this->flow_length_stats.add_value((double)packet.get_payload_bytes());
-	this->src = packet.get_ip_src();
-	this->dst = packet.get_ip_dst();
+	this->src = packet.get_src();
+	this->dst = packet.get_dst();
 	this->src_port = packet.get_src_port();
 	this->dst_port = packet.get_dst_port();
 
-	if(inet_ntoa(this->src) == inet_ntoa(packet.get_ip_src())) {
+	if(inet_ntoa(this->src) == inet_ntoa(packet.get_src())) {
 		this->min_seg_size_forward = packet.get_header_bytes();
 		this->init_win_bytes_forward = packet.get_tcp_window();
 		this->flow_length_stats.add_value((double)packet.get_payload_bytes());
@@ -186,7 +189,7 @@ void basic_flow::add_packet(basic_packet_info packet) {
 	long current_timestamp = packet.get_timestamp();
 	if(is_bidirectional) {
 		this->flow_length_stats.add_value((double)packet.get_payload_bytes());
-		if(inet_ntoa(this->src) == inet_ntoa(packet.get_ip_src())) {
+		if(inet_ntoa(this->src) == inet_ntoa(packet.get_src())) {
 			if(packet.get_payload_bytes() >= 1) { this->act_data_pkt_forward++; }
 			this->fwd_pkt_stats.add_value((double)packet.get_payload_bytes());
 			this->fHeader_bytes += packet.get_header_bytes();
@@ -237,7 +240,7 @@ void basic_flow::add_packet(basic_packet_info packet) {
 }
 
 void basic_flow::update_flow_bulk(basic_packet_info packet) {
-	if(inet_ntoa(this->src) == inet_ntoa(packet.get_ip_src())) {
+	if(inet_ntoa(this->src) == inet_ntoa(packet.get_src())) {
 		update_forward_bulk(packet, blast_bulk_TS);
 	}
 	else {
@@ -416,17 +419,18 @@ std::string basic_flow::dump_flow_based_features_S() {
 	dump << this->dst_port << separator;
 	dump << this->protocol << separator;
 
-	// TO DO
-	// String starttime = DateFormatter.convertMilliseconds2String(flowStartTime/1000L, "dd/MM/yyyy hh:mm:ss a");
-	// 	dump<<starttime)<<separator);
+	std::time_t t_c = std::chrono::system_clock::to_time_t(
+		std::chrono::system_clock::time_point{std::chrono::seconds(this->flow_start_time)});
+
+	dump << std::put_time(std::localtime(&t_c), "%d/%m/%Y %T") << separator;
 
 	long flow_duration = flow_last_seen - flow_start_time;
 	dump << flow_duration << separator;
 
-	dump << fwd_pkt_stats.get_count() << separator;
-	dump << bwd_pkt_stats.get_count() << separator;
-	dump << fwd_pkt_stats.get_sum() << separator;
-	dump << bwd_pkt_stats.get_sum() << separator;
+	dump << (long)fwd_pkt_stats.get_count() << separator;
+	dump << (long)bwd_pkt_stats.get_count() << separator;
+	dump << (long)fwd_pkt_stats.get_sum() << separator;
+	dump << (long)bwd_pkt_stats.get_sum() << separator;
 
 	if(fwd_pkt_stats.get_count() > 0L) {
 		dump << fwd_pkt_stats.get_max() << separator;
@@ -454,12 +458,11 @@ std::string basic_flow::dump_flow_based_features_S() {
 		dump << 0 << separator;
 	}
 
-	dump<<((double)(forward_bytes + backward_bytes)) / ((double)flow_duration / 1000000L))
-		<<separator;																		//21
-	dump<<((double)packet_count()) / ((double)flow_duration / 1000000L))<<separator); //22
-	dump << flow_IAT.get_avg() << separator;										  //23
-	dump << flow_IAT.get_standard_deviation() << separator;							  //24
-	dump << flow_IAT.get_max() << separator;										  //25
+	dump << (forward_bytes + backward_bytes) / (flow_duration / 1000000.0) << separator;
+	dump << packet_count() / flow_duration / 1000000.0 << separator;
+	dump << flow_IAT.get_avg() << separator;
+	dump << flow_IAT.get_standard_deviation() << separator;
+	dump << flow_IAT.get_max() << separator;
 	dump << flow_IAT.get_min() << separator;
 
 	if(this->forward.size() > 1) {
@@ -505,7 +508,7 @@ std::string basic_flow::dump_flow_based_features_S() {
 	if(this->forward.size() > 0 || this->backward.size() > 0) {
 		dump << flow_length_stats.get_min() << separator;
 		dump << flow_length_stats.get_max() << separator;
-		dump << flow_length_stats.get_mean() << separator;
+		dump << flow_length_stats.get_avg() << separator;
 		dump << flow_length_stats.get_standard_deviation() << separator;
 		dump << flow_length_stats.get_variance() << separator;
 	}
@@ -517,14 +520,14 @@ std::string basic_flow::dump_flow_based_features_S() {
 		dump << 0 << separator;
 	}
 
-	dump << flag_counts["FIN"] << separator;
-	dump << flag_counts["SYN"] << separator;
-	dump << flag_counts["RST"] << separator;
-	dump << flag_counts["PSH"] << separator;
-	dump << flag_counts["ACK"] << separator;
-	dump << flag_counts["URG"] << separator;
-	dump << flag_counts["CWR"] << separator;
-	dump << flag_counts["ECE"] << separator;
+	dump << flag_counts["FIN"].get() << separator;
+	dump << flag_counts["SYN"].get() << separator;
+	dump << flag_counts["RST"].get() << separator;
+	dump << flag_counts["PSH"].get() << separator;
+	dump << flag_counts["ACK"].get() << separator;
+	dump << flag_counts["URG"].get() << separator;
+	dump << flag_counts["CWR"].get() << separator;
+	dump << flag_counts["ECE"].get() << separator;
 
 	dump << get_down_up_ratio() << separator;
 	dump << get_avg_pkt_size() << separator;
@@ -565,13 +568,13 @@ std::string basic_flow::dump_flow_based_features_S() {
 		dump << flow_idle.get_avg() << separator;
 		dump << flow_idle.get_standard_deviation() << separator;
 		dump << flow_idle.get_max() << separator;
-		dump << flow_idle.get_min() << separator;
+		dump << flow_idle.get_min();
 	}
 	else {
 		dump << 0 << separator;
 		dump << 0 << separator;
 		dump << 0 << separator;
-		dump << 0 << separator;
+		dump << 0;
 	}
 
 	return dump.str();

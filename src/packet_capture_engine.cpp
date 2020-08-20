@@ -1,10 +1,10 @@
 #include "packet_capture.h"
 
-int packet_capture_engine(char* filter_exp = "ip",
+int packet_capture_engine(std::vector<basic_packet_info>& buffer,
+						  char* filter_exp,
 						  int num_pkts = 100,
 						  int timeout = 1000,
-						  bool is_promiscious = true,
-						  std::vector<basic_packet_info>& buffer) {
+						  bool is_promiscious = true) {
 
 	packet_capture capture(filter_exp, num_pkts, timeout, is_promiscious);
 	/* First find the device to capture */

@@ -1,13 +1,14 @@
 #include "flow_generator_engine.h"
 
-#include "flow_generator_engine.h"
 #include <ctime>
 
 void flow_generator_engine(long flow_timeout,
 						   long activity_timeout,
-						   int total_flows = 0,
+						   int total_flows,
 						   std::string file_path,
 						   std::vector<basic_packet_info>& buffer) {
+	printf("generating flows\n");
+
 	flow_generator flow_gen = flow_generator(true, flow_timeout, activity_timeout);
 	int n_valid = 0;
 	int n_total = 0;
@@ -17,10 +18,12 @@ void flow_generator_engine(long flow_timeout,
 		try {
 			++n_total;
 			if(buffer[i].get_id() != -1) {
+				// printf("here\n");
 				flow_gen.add_packet(buffer[i]);
 				++n_valid;
 			}
 			else {
+				printf("here2\n");
 				++n_discarded;
 			}
 		}
@@ -28,6 +31,7 @@ void flow_generator_engine(long flow_timeout,
 			break;
 		}
 	}
-
+	printf("dumping the flows\n");
 	flow_gen.dump_labeled_current_flow(file_path);
+	printf("done\n");
 }

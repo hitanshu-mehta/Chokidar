@@ -1,4 +1,5 @@
 #include "flow_generator.h"
+#include <fstream>
 
 flow_generator::flow_generator(bool bidirectional, long flow_timeout, long activity_timeout) {
 	this->bidirectional = bidirectional;
@@ -16,7 +17,7 @@ void flow_generator::init() {
 
 void flow_generator::add_packet(basic_packet_info packet) {
 	if(packet.get_id() == -1) return;
-
+	printf("adding packet\n");
 	basic_flow flow;
 	long current_timestamp = packet.get_timestamp();
 	std::string id;
@@ -68,4 +69,18 @@ void flow_generator::add_packet(basic_packet_info packet) {
 int flow_generator::get_flow_count() {
 	this->finished_flow_count++;
 	return this->finished_flow_count;
+}
+
+int flow_generator::dump_labeled_current_flow(std::string output_path) {
+	std::ofstream output_file(output_path, std::ios::app);
+	int total = 0;
+	for(auto flow : current_flows) {
+		if(flow.second.packet_count() > 1) {
+			std::string tmp = flow.second.dump_flow_based_features_S();
+			std::cout << tmp << "\n";
+			output_file << tmp + "\n";
+			++total;
+		}
+	}
+	return total;
 }

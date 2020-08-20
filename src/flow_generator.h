@@ -27,7 +27,7 @@ public:
 
 	void add_packet(basic_packet_info);
 	int get_flow_count();
-	void dump_labeled_current_flow(std::string);
+	int dump_labeled_current_flow(std::string);
 };
 
 #endif

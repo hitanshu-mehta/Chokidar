@@ -8,17 +8,19 @@
 
 namespace utils {
 
-class id_generator
-{
-private:
-	long id = 0;
-	id_generator() { this->id = 0L; }
-	id_generator(long id) { this->id = id; }
-	long next_id() {
-		this->id++;
-		return this->id;
-	}
-};
+static long id = 0;
+
+// class id_generator
+// {
+// private:
+// 	static long id;
+// 	id_generator() { this->id = 0L; }
+// 	id_generator(long id) { this->id = id; }
+// 	long next_id() {
+// 		this->id++;
+// 		return this->id;
+// 	}
+// };
 
 class summary_statistics
 {
@@ -40,15 +42,16 @@ public:
 	double const get_avg() { return (get_sum() / (get_count())); }
 	double const get_min() { return *std::min_element(values.begin(), values.end()); }
 	double const get_max() { return *std::max_element(values.begin(), values.end()); }
-	double const get_standard_deviation() {
+	double const get_variance() {
 		double var = 0;
 		double mean = get_avg();
 		for(long i = 0; i < (long)values.size(); i++) {
 			var += (values[i] - mean) * (values[i] - mean);
 		}
 		var = var / (double)values.size();
-		return std::sqrt(var);
+		return var;
 	}
+	double const get_standard_deviation() { return std::sqrt(get_variance()); }
 };
 
 } // namespace utils
