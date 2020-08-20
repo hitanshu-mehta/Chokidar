@@ -2,6 +2,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <algorithm>
+#include <cmath>
 #include <vector>
 
 namespace utils {
@@ -36,6 +38,17 @@ public:
 	int const get_count() { return values.size(); }
 	double const get_sum() { return this->sum; }
 	double const get_avg() { return (get_sum() / (get_count())); }
+	double const get_min() { return *std::min_element(values.begin(), values.end()); }
+	double const get_max() { return *std::max_element(values.begin(), values.end()); }
+	double const get_standard_deviation() {
+		double var = 0;
+		double mean = get_avg();
+		for(long i = 0; i < (long)values.size(); i++) {
+			var += (values[i] - mean) * (values[i] - mean);
+		}
+		var = var / (double)values.size();
+		return std::sqrt(var);
+	}
 };
 
 } // namespace utils

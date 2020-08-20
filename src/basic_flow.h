@@ -5,6 +5,7 @@
 #include "constants.h"
 #include "utils.h"
 
+#include <iostream>
 #include <map>
 #include <netinet/in.h>
 #include <string>
@@ -92,6 +93,7 @@ public:
 	basic_flow(bool, basic_packet_info, in_addr, in_addr, net::port_t, net::port_t, long);
 	basic_flow(bool, basic_packet_info, long);
 
+	std::string dump_flow_based_features_S();
 	long const get_flow_start_time();
 	int packet_count();
 	void first_packet(basic_packet_info);
@@ -102,6 +104,28 @@ public:
 	void update_forward_bulk(basic_packet_info, long);
 	void update_backward_bulk(basic_packet_info, long);
 	void add_packet(basic_packet_info);
+
+	double get_down_up_ratio();
+	double get_avg_pkt_size();
+	double get_avg_seg_size();
+	double get_favg_seg_size();
+	double get_bavg_seg_size();
+
+	double get_fpkts_per_second();
+	double get_bpkts_per_second();
+
+	long get_favg_bytes_per_bulk();
+	long get_favg_packets_per_bulk();
+	long get_bavg_bytes_per_bulk();
+	long get_bavg_packets_per_bulk();
+	double get_fbulk_duration_seconds();
+	long get_favg_bulk_rate();
+	long get_bavg_bulk_rate();
+
+	long get_sflow_fpackets();
+	long get_sflow_fbytes();
+	long get_sflow_bpackets();
+	long get_sflow_bbytes();
 };
 
 /* --------------------- */

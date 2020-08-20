@@ -21,8 +21,13 @@ private:
 	int finished_flow_count;
 
 public:
+	flow_generator() { }
+	flow_generator(bool, long, long);
+	void init();
+
 	void add_packet(basic_packet_info);
 	int get_flow_count();
+	void dump_labeled_current_flow(std::string);
 };
 
 #endif

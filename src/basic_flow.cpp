@@ -1,5 +1,6 @@
 #include "basic_flow.h"
 #include <arpa/inet.h>
+#include <sstream>
 
 basic_flow::basic_flow(bool is_bidirectional,
 					   basic_packet_info packet,
@@ -61,6 +62,80 @@ void basic_flow::init_flags() {
 	flag_counts["URG"] = mutable_int();
 	flag_counts["CWR"] = mutable_int();
 	flag_counts["ECE"] = mutable_int();
+}
+
+double basic_flow::get_fpkts_per_second() {
+	long duration = this->flowLastSeen - this->flowStartTime;
+	if(duration > 0) { return (this->forward.size() / ((double)duration / 1000000L)); }
+	else
+		return 0;
+}
+
+double basic_flow::get_bpkts_per_second() {
+	long duration = this->flowLastSeen - this->flowStartTime;
+	if(duration > 0) { return (this->backward.size() / ((double)duration / 1000000L)); }
+	else
+		return 0;
+}
+
+double basic_flow::get_favg_bytes_per_bulk() {
+	if(this->fbulk_state_count != 0)
+		return (this->fbulk_size_total / (double)this->fbulk_state_count);
+	return 0;
+}
+
+double basic_flow::get_favg_packets_per_bulk() {
+	if(this->fbulk_state_count != 0)
+		return (this->fbulk_packet_count / (double)this->fbulk_state_count);
+	return 0;
+}
+
+double basic_flow::get_bavg_bytes_per_bulk() {
+	if(this->bbulk_state_count != 0)
+		return (this->bbulk_size_total / (double)this->bbulk_state_count);
+	return 0;
+}
+
+double basic_flow::get_bavg_packets_per_bulk() {
+	if(this->bbulk_state_count != 0)
+		return (this->bbulk_packet_count / (double)this->bbulk_state_count);
+	return 0;
+}
+
+long basic_flow::get_favg_bulk_rate() {
+	if(this->fbulk_duration != 0)
+		return (long)(this->fbulk_size_total / this->get_fbulk_duration_seconds());
+	return 0;
+}
+
+long basic_flow::get_bavg_bulk_rate() {
+	if(this->bbulk_duration != 0)
+		return (long)(this->bbulk_size_total / this->get_bbulk_duration_seconds());
+	return 0;
+}
+
+double basic_flow::get_fbulk_duration_seconds() { return this->fbulk_duration / 1000000.0; }
+
+double basic_flow::get_bbulk_duration_seconds() { return this->bbulk_duration / 1000000.0; }
+
+long basic_flow::get_sflow_fpackets() {
+	if(this->sf_count <= 0) return 0;
+	return this->forward.size() / this->sf_count;
+}
+
+long basic_flow::get_sflow_fbytes() {
+	if(sf_count <= 0) return 0;
+	return this->forward_bytes / this->sf_count;
+}
+
+long basic_flow::get_sflow_bpackets() {
+	if(this->sf_count <= 0) return 0;
+	return this->backward.size() / this->sf_count;
+}
+
+long basic_flow::get_sflow_bbytes() {
+	if(sf_count <= 0) return 0;
+	return this->backward_bytes / this->sf_count;
 }
 
 void basic_flow::first_packet(basic_packet_info packet) {
@@ -305,4 +380,199 @@ int basic_flow::packet_count() {
 	if(is_bidirectional) { return this->forward.size() + this->backward.size(); }
 	else
 		return this->forward.size();
+}
+
+double basic_flow::get_down_up_ratio() {
+	if(this->forward.size() > 0) { return (this->backward.size() / (double)this->forward.size()); }
+	return 0.0;
+}
+
+double basic_flow::get_avg_pkt_size() {
+	if(this->packet_count() > 0) {
+		return (this->flow_length_stats.get_sum() / (double)this->packet_count());
+	}
+	return 0.0;
+}
+
+double basic_flow::get_favg_seg_size() {
+	if(this->forward.size() != 0)
+		return (this->fwd_pkt_stats.get_sum() / (double)this->forward.size());
+	return 0.0;
+}
+
+double basic_flow::get_bavg_seg_size() {
+	if(this->backward.size() != 0)
+		return (this->bwd_pkt_stats.get_sum() / (double)this->backward.size());
+	return 0.0;
+}
+
+std::string basic_flow::dump_flow_based_features_S() {
+	std::string separator = ",";
+	std::stringstream dump;
+	dump << flow_id << separator;
+	dump << inet_ntoa(this->src) << separator;
+	dump << this->src_port << separator;
+	dump << inet_ntoa(this->dst) << separator;
+	dump << this->dst_port << separator;
+	dump << this->protocol << separator;
+
+	// TO DO
+	// String starttime = DateFormatter.convertMilliseconds2String(flowStartTime/1000L, "dd/MM/yyyy hh:mm:ss a");
+	// 	dump<<starttime)<<separator);
+
+	long flow_duration = flow_last_seen - flow_start_time;
+	dump << flow_duration << separator;
+
+	dump << fwd_pkt_stats.get_count() << separator;
+	dump << bwd_pkt_stats.get_count() << separator;
+	dump << fwd_pkt_stats.get_sum() << separator;
+	dump << bwd_pkt_stats.get_sum() << separator;
+
+	if(fwd_pkt_stats.get_count() > 0L) {
+		dump << fwd_pkt_stats.get_max() << separator;
+		dump << fwd_pkt_stats.get_min() << separator;
+		dump << fwd_pkt_stats.get_avg() << separator;
+		dump << fwd_pkt_stats.get_standard_deviation() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	if(bwd_pkt_stats.get_count() > 0L) {
+		dump << bwd_pkt_stats.get_max() << separator;
+		dump << bwd_pkt_stats.get_min() << separator;
+		dump << bwd_pkt_stats.get_avg() << separator;
+		dump << bwd_pkt_stats.get_standard_deviation() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	dump<<((double)(forward_bytes + backward_bytes)) / ((double)flow_duration / 1000000L))
+		<<separator;																		//21
+	dump<<((double)packet_count()) / ((double)flow_duration / 1000000L))<<separator); //22
+	dump << flow_IAT.get_avg() << separator;										  //23
+	dump << flow_IAT.get_standard_deviation() << separator;							  //24
+	dump << flow_IAT.get_max() << separator;										  //25
+	dump << flow_IAT.get_min() << separator;
+
+	if(this->forward.size() > 1) {
+		dump << forward_IAT.get_sum() << separator;
+		dump << forward_IAT.get_avg() << separator;
+		dump << forward_IAT.get_standard_deviation() << separator;
+		dump << forward_IAT.get_max() << separator;
+		dump << forward_IAT.get_min() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	if(this->backward.size() > 1) {
+		dump << backward_IAT.get_sum() << separator;
+		dump << backward_IAT.get_avg() << separator;
+		dump << backward_IAT.get_standard_deviation() << separator;
+		dump << backward_IAT.get_max() << separator;
+		dump << backward_IAT.get_min() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	dump << fPSH_cnt << separator;
+	dump << bPSH_cnt << separator;
+	dump << fURG_cnt << separator;
+	dump << bURG_cnt << separator;
+
+	dump << fHeader_bytes << separator;
+	dump << bHeader_bytes << separator;
+	dump << get_fpkts_per_second() << separator;
+	dump << get_fpkts_per_second() << separator;
+
+	if(this->forward.size() > 0 || this->backward.size() > 0) {
+		dump << flow_length_stats.get_min() << separator;
+		dump << flow_length_stats.get_max() << separator;
+		dump << flow_length_stats.get_mean() << separator;
+		dump << flow_length_stats.get_standard_deviation() << separator;
+		dump << flow_length_stats.get_variance() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	dump << flag_counts["FIN"] << separator;
+	dump << flag_counts["SYN"] << separator;
+	dump << flag_counts["RST"] << separator;
+	dump << flag_counts["PSH"] << separator;
+	dump << flag_counts["ACK"] << separator;
+	dump << flag_counts["URG"] << separator;
+	dump << flag_counts["CWR"] << separator;
+	dump << flag_counts["ECE"] << separator;
+
+	dump << get_down_up_ratio() << separator;
+	dump << get_avg_pkt_size() << separator;
+	dump << get_favg_seg_size() << separator;
+	dump << get_bavg_seg_size() << separator;
+
+	dump << get_favg_bytes_per_bulk() << separator;
+	dump << get_favg_packets_per_bulk() << separator;
+	dump << get_favg_bulk_rate() << separator;
+	dump << get_bavg_bytes_per_bulk() << separator;
+	dump << get_bavg_packets_per_bulk() << separator;
+	dump << get_bavg_bulk_rate() << separator;
+
+	dump << get_sflow_fpackets() << separator;
+	dump << get_sflow_fbytes() << separator;
+	dump << get_sflow_bpackets() << separator;
+	dump << get_sflow_bbytes() << separator;
+
+	dump << init_win_bytes_forward << separator;
+	dump << init_win_bytes_backward << separator;
+	dump << act_data_pkt_forward << separator;
+	dump << min_seg_size_forward << separator;
+
+	if(this->flow_active.get_count() > 0) {
+		dump << flow_active.get_avg() << separator;
+		dump << flow_active.get_standard_deviation() << separator;
+		dump << flow_active.get_max() << separator;
+		dump << flow_active.get_min() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	if(this->flow_idle.get_count() > 0) {
+		dump << flow_idle.get_avg() << separator;
+		dump << flow_idle.get_standard_deviation() << separator;
+		dump << flow_idle.get_max() << separator;
+		dump << flow_idle.get_min() << separator;
+	}
+	else {
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+		dump << 0 << separator;
+	}
+
+	return dump.str();
 }

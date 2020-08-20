@@ -1,5 +1,19 @@
 #include "flow_generator.h"
 
+flow_generator::flow_generator(bool bidirectional, long flow_timeout, long activity_timeout) {
+	this->bidirectional = bidirectional;
+	this->flow_timeout = flow_timeout;
+	this->flow_activity_timeout = activity_timeout;
+	init();
+}
+
+void flow_generator::init() {
+	this->current_flows.clear();
+	this->finished_flows.clear();
+	this->ip_addresses.clear();
+	this->finished_flow_count = 0;
+}
+
 void flow_generator::add_packet(basic_packet_info packet) {
 	if(packet.get_id() == -1) return;
 
