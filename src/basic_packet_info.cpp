@@ -12,6 +12,8 @@ basic_packet_info::basic_packet_info(
 
 	  };
 
+std::string basic_packet_info::generate_id() { bool forward = true; }
+
 void const basic_packet_info::print_all_info() {
 	fprintf(stderr, "|-----------------Packet Info----------------|\n");
 	fprintf(stderr, "Source ip: %s\n", inet_ntoa(ip_src));
@@ -20,6 +22,6 @@ void const basic_packet_info::print_all_info() {
 	fprintf(stderr, "Destination port: %d\n", ntohs(dst_port));
 	fprintf(stderr, "Protocol: %d\n", protocol);
 	fprintf(stderr, "Timestamp: %ld\n", timestamp);
-	fprintf(stderr, "TCP window: %d\n", TCPwindow);
+	fprintf(stderr, "TCP window: %d\n", tcp_window);
 	// fprintf(stderr, "Flags %d\n", all_flags);
 }
