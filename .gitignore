@@ -8,3 +8,4 @@ venv/*
 dataset/*
 resources/*
 build/*
+nsl-kdd-classification.ipynb
