@@ -1,1 +1,2 @@
-src/* linguist-language=cpp
+* linguist-vendored
+*.ipynb linguist-vendored=false
