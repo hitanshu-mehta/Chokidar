@@ -18,12 +18,11 @@ void flow_generator_engine(long flow_timeout,
 		try {
 			++n_total;
 			if(buffer[i].get_id() != -1) {
-				// printf("here\n");
 				flow_gen.add_packet(buffer[i]);
 				++n_valid;
 			}
 			else {
-				printf("here2\n");
+				fprintf(stderr, "Packet discarded\n");
 				++n_discarded;
 			}
 		}

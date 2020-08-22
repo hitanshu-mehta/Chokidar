@@ -2,11 +2,7 @@
 #include "flow_generator_engine.h"
 #include "packet_capture_engine.h"
 
-#include <bsoncxx/builder/stream/document.hpp>
-#include <bsoncxx/json.hpp>
 
-#include <mongocxx/client.hpp>
-#include <mongocxx/instance.hpp>
 
 #include <cstdint>
 #include <cstdio>

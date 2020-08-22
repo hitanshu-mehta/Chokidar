@@ -127,7 +127,7 @@ long basic_flow::get_sflow_fpackets() {
 }
 
 long basic_flow::get_sflow_fbytes() {
-	if(sf_count <= 0) return 0;
+	if(this->sf_count <= 0) return 0;
 	return this->forward_bytes / this->sf_count;
 }
 
@@ -137,7 +137,7 @@ long basic_flow::get_sflow_bpackets() {
 }
 
 long basic_flow::get_sflow_bbytes() {
-	if(sf_count <= 0) return 0;
+	if(this->sf_count <= 0) return 0;
 	return this->backward_bytes / this->sf_count;
 }
 
@@ -457,9 +457,13 @@ std::string basic_flow::dump_flow_based_features_S() {
 		dump << 0 << separator;
 		dump << 0 << separator;
 	}
-
-	dump << (forward_bytes + backward_bytes) / (flow_duration / 1000000.0) << separator;
-	dump << packet_count() / flow_duration / 1000000.0 << separator;
+	if(flow_duration != 0)
+		dump << (forward_bytes + backward_bytes) / (flow_duration / 1000000.0) << separator;
+	else
+		dump << 0 << separator;
+	if(flow_duration != 0) dump << packet_count() / (flow_duration / 1000000.0) << separator;
+	else
+		dump << 0 << separator;
 	dump << flow_IAT.get_avg() << separator;
 	dump << flow_IAT.get_standard_deviation() << separator;
 	dump << flow_IAT.get_max() << separator;
@@ -503,7 +507,7 @@ std::string basic_flow::dump_flow_based_features_S() {
 	dump << fHeader_bytes << separator;
 	dump << bHeader_bytes << separator;
 	dump << get_fpkts_per_second() << separator;
-	dump << get_fpkts_per_second() << separator;
+	dump << get_bpkts_per_second() << separator;
 
 	if(this->forward.size() > 0 || this->backward.size() > 0) {
 		dump << flow_length_stats.get_min() << separator;

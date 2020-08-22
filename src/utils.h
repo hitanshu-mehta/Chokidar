@@ -39,16 +39,16 @@ public:
 	}
 	int const get_count() { return values.size(); }
 	double const get_sum() { return this->sum; }
-	double const get_avg() { return (get_sum() / (get_count())); }
+	double const get_avg() { return get_count() != 0 ? (get_sum() / (get_count())) : 0; }
 	double const get_min() { return *std::min_element(values.begin(), values.end()); }
 	double const get_max() { return *std::max_element(values.begin(), values.end()); }
 	double const get_variance() {
 		double var = 0;
 		double mean = get_avg();
+		if(values.size() == 0) return 0;
 		for(long i = 0; i < (long)values.size(); i++) {
 			var += (values[i] - mean) * (values[i] - mean);
 		}
-		var = var / (double)values.size();
 		return var;
 	}
 	double const get_standard_deviation() { return std::sqrt(get_variance()); }
