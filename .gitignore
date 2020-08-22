@@ -7,3 +7,4 @@ docs/*
 venv/*
 dataset/*
 resources/*
+build/*
