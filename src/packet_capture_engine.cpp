@@ -1,6 +1,7 @@
 #include "packet_capture.h"
 
-int packet_capture_engine(char* filter_exp = "ip",
+int packet_capture_engine(std::vector<basic_packet_info>& buffer,
+						  char* filter_exp,
 						  int num_pkts = 100,
 						  int timeout = 1000,
 						  bool is_promiscious = true) {
@@ -55,8 +56,8 @@ int packet_capture_engine(char* filter_exp = "ip",
 	capture.sniff();
 
 	/* get iterator of basic packet info vector of captured packets */
-	std::vector<basic_packet_info> ptr = capture.get_basic_pkts_from_parser();
-	for(auto& ele : ptr) { ele.print_all_info(); }
+	buffer = capture.get_basic_pkts_from_parser();
+	for(auto& ele : buffer) { ele.print_all_info(); }
 
 	printf("\nCapture complete.\n");
 	return 0;
