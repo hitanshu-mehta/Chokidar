@@ -1,8 +1,6 @@
-#include "basic_packet_info.h"
-#include "flow_generator_engine.h"
-#include "packet_capture_engine.h"
-
-
+#include "basic_packet_info.hpp"
+#include "flow_generator_engine.hpp"
+#include "packet_capture_engine.hpp"
 
 #include <cstdint>
 #include <cstdio>

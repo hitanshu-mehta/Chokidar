@@ -1,4 +1,4 @@
-#include "packet_capture.h"
+#include "packet_capture.hpp"
 
 int packet_capture_engine(std::vector<basic_packet_info>& buffer,
 						  char* filter_exp,

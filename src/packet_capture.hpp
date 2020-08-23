@@ -1,7 +1,7 @@
-#ifndef PACKET_CAPTURE_H
-#define PACKET_CAPTURE_H
+#ifndef PACKET_CAPTURE_HPP
+#define PACKET_CAPTURE_HPP
 
-#include "packet_parser.h"
+#include "packet_parser.hpp"
 #include <pcap.h>
 #include <vector>
 

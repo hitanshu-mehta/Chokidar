@@ -1,9 +1,9 @@
-#ifndef BASIC_FLOW_H
-#define BASIC_FLOW_H
+#ifndef BASIC_FLOW_HPP
+#define BASIC_FLOW_HPP
 
-#include "basic_packet_info.h"
-#include "constants.h"
-#include "utils.h"
+#include "basic_packet_info.hpp"
+#include "constants.hpp"
+#include "utils.hpp"
 
 #include <iostream>
 #include <map>

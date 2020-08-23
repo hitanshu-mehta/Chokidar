@@ -1,7 +1,7 @@
-#ifndef UDP_HEADER_H
-#define UDP_HEADER_H
+#ifndef UDP_HEADER_HPP
+#define UDP_HEADER_HPP
 
-#include "constants.h"
+#include "constants.hpp"
 #include <cstdint>
 
 /*

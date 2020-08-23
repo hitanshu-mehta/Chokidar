@@ -1,8 +1,8 @@
-#ifndef FLOW_GENERATOR_H
-#define FLOW_GENERATOR_H
+#ifndef FLOW_GENERATOR_HPP
+#define FLOW_GENERATOR_HPP
 
-#include "basic_flow.h"
-#include "basic_packet_info.h"
+#include "basic_flow.hpp"
+#include "basic_packet_info.hpp"
 #include <map>
 #include <string>
 #include <vector>

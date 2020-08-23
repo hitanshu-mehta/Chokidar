@@ -1,8 +1,8 @@
-#ifndef BASIC_PACKET_INFO
-#define BASIC_PACKET_INFO
+#ifndef BASIC_PACKET_INFO_HPP
+#define BASIC_PACKET_INFO_HPP
 
-#include "constants.h"
-#include "utils.h"
+#include "constants.hpp"
+#include "utils.hpp"
 
 #include <cstdint>
 #include <netinet/in.h>
