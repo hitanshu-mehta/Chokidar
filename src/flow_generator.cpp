@@ -71,7 +71,7 @@ int flow_generator::get_flow_count() {
 	return this->finished_flow_count;
 }
 
-int flow_generator::dump_labeled_current_flow(std::string output_path) {
+int flow_generator::dump_labeled_current_flow_to_file(std::string output_path) {
 	std::ofstream output_file(output_path, std::ios::app);
 	int total = 0;
 	for(auto flow : current_flows) {
@@ -79,6 +79,17 @@ int flow_generator::dump_labeled_current_flow(std::string output_path) {
 			std::string tmp = flow.second.dump_flow_based_features_S();
 			std::cout << tmp << "\n";
 			output_file << tmp + "\n";
+			++total;
+		}
+	}
+	return total;
+}
+int flow_generator::dump_labeled_current_flow_to_db(database* const db) {
+	int total = 0;
+	for(auto flow : current_flows) {
+		if(flow.second.packet_count() > 1) {
+			db->insert_doc(db->get_flows_collection(),
+						   flow.second.dump_flow_based_features_to_db());
 			++total;
 		}
 	}

@@ -583,3 +583,178 @@ std::string basic_flow::dump_flow_based_features_S() {
 
 	return dump.str();
 }
+
+bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
+	auto dump = bsoncxx::builder::stream::document{};
+	dump << "Flow ID" << flow_id;
+	dump << "Source IP" << inet_ntoa(this->src);
+	dump << "Source Port" << this->src_port;
+	dump << "Destination IP" << inet_ntoa(this->dst);
+	dump << "Destination Port" << this->dst_port;
+	dump << "Protocol" << this->protocol;
+
+	std::time_t t_c = std::chrono::system_clock::to_time_t(
+		std::chrono::system_clock::time_point{std::chrono::seconds(this->flow_start_time)});
+
+	// dump << "Timestamp" << std::put_time(std::localtime(&t_c), "%d/%m/%Y %T");
+
+	long flow_duration = flow_last_seen - flow_start_time;
+	dump << "Flow Duration" << flow_duration;
+
+	dump << "Total Fwd Packets" << (long)fwd_pkt_stats.get_count();
+	dump << "Total Backward Packets" << (long)bwd_pkt_stats.get_count();
+	dump << "Total Length of Fwd Packets" << (long)fwd_pkt_stats.get_sum();
+	dump << "Total Length of Bwd Packets" << (long)bwd_pkt_stats.get_sum();
+
+	if(fwd_pkt_stats.get_count() > 0L) {
+		dump << "Fwd Packet Length Max" << fwd_pkt_stats.get_max();
+		dump << "Fwd Packet Length Min" << fwd_pkt_stats.get_min();
+		dump << "Fwd Packet Length Mean" << fwd_pkt_stats.get_avg();
+		dump << "Fwd Packet Length Std" << fwd_pkt_stats.get_standard_deviation();
+	}
+	else {
+		dump << "Fwd Packet Length Max" << 0;
+		dump << "Fwd Packet Length Min" << 0;
+		dump << "Fwd Packet Length Mean" << 0;
+		dump << "Fwd Packet Length Std" << 0;
+	}
+
+	if(bwd_pkt_stats.get_count() > 0L) {
+		dump << "Bwd Packet Length Max" << bwd_pkt_stats.get_max();
+		dump << "Bwd Packet Length Min" << bwd_pkt_stats.get_min();
+		dump << "Bwd Packet Length Mean" << bwd_pkt_stats.get_avg();
+		dump << "Bwd Packet Length Std" << bwd_pkt_stats.get_standard_deviation();
+	}
+	else {
+		dump << "Bwd Packet Length Max" << 0;
+		dump << "Bwd Packet Length Min" << 0;
+		dump << "Bwd Packet Length Mean" << 0;
+		dump << "Bwd Packet Length Std" << 0;
+	}
+	if(flow_duration != 0)
+		dump << "Flow Bytes/s" << (forward_bytes + backward_bytes) / (flow_duration / 1000000.0);
+	else
+		dump << "Flow Bytes/s" << 0;
+	if(flow_duration != 0) dump << "Flow Packets/s" << packet_count() / (flow_duration / 1000000.0);
+	else
+		dump << "Flow Packets/s" << 0;
+	dump << "Flow IAT Mean" << flow_IAT.get_avg();
+	dump << "Flow IAT Std" << flow_IAT.get_standard_deviation();
+	dump << "Flow IAT Max" << flow_IAT.get_max();
+	dump << "Flow IAT Min" << flow_IAT.get_min();
+
+	if(this->forward.size() > 1) {
+		dump << "Fwd IAT Total" << forward_IAT.get_sum();
+		dump << "Fwd IAT Mean" << forward_IAT.get_avg();
+		dump << "Fwd IAT Std" << forward_IAT.get_standard_deviation();
+		dump << "Fwd IAT Max" << forward_IAT.get_max();
+		dump << "Fwd IAT Min" << forward_IAT.get_min();
+	}
+	else {
+		dump << "Fwd IAT Total" << 0;
+		dump << "Fwd IAT Mean" << 0;
+		dump << "Fwd IAT Std" << 0;
+		dump << "Fwd IAT Max" << 0;
+		dump << "Fwd IAT Min" << 0;
+	}
+
+	if(this->backward.size() > 1) {
+		dump << "Bwd IAT Total" << backward_IAT.get_sum();
+		dump << "Bwd IAT Mean" << backward_IAT.get_avg();
+		dump << "Bwd IAT Std" << backward_IAT.get_standard_deviation();
+		dump << "Bwd IAT Max" << backward_IAT.get_max();
+		dump << "Bwd IAT Min" << backward_IAT.get_min();
+	}
+	else {
+		dump << "Bwd IAT Total" << 0;
+		dump << "Bwd IAT Mean" << 0;
+		dump << "Bwd IAT Std" << 0;
+		dump << "Bwd IAT Max" << 0;
+		dump << "Bwd IAT Min" << 0;
+	}
+
+	dump << "Fwd PSH Flags" << fPSH_cnt;
+	dump << "Bwd PSH Flags" << bPSH_cnt;
+	dump << "Fwd URG Flags" << fURG_cnt;
+	dump << "Bwd URG Flags" << bURG_cnt;
+
+	dump << "Fwd Header Length" << fHeader_bytes;
+	dump << "Bwd Header Length" << bHeader_bytes;
+	dump << "Fwd Packets/s" << get_fpkts_per_second();
+	dump << "Bwd Packets/s" << get_bpkts_per_second();
+
+	if(this->forward.size() > 0 || this->backward.size() > 0) {
+		dump << "Min Packet Length" << flow_length_stats.get_min();
+		dump << "Max Packet Length" << flow_length_stats.get_max();
+		dump << "Packet Length Mean" << flow_length_stats.get_avg();
+		dump << "Packet Length Std" << flow_length_stats.get_standard_deviation();
+		dump << "Packet Length Variance" << flow_length_stats.get_variance();
+	}
+	else {
+		dump << "Min Packet Length" << 0;
+		dump << "Max Packet Length" << 0;
+		dump << "Packet Length Mean" << 0;
+		dump << "Packet Length Std" << 0;
+		dump << "Packet Length Variance" << 0;
+	}
+
+	dump << "FIN Flag Count" << flag_counts["FIN"].get();
+	dump << "SYN Flag Count" << flag_counts["SYN"].get();
+	dump << "RST Flag Count" << flag_counts["RST"].get();
+	dump << "PSH Flag Count" << flag_counts["PSH"].get();
+	dump << "ACK Flag Count" << flag_counts["ACK"].get();
+	dump << "URG Flag Count" << flag_counts["URG"].get();
+	dump << "CWR Flag Count" << flag_counts["CWR"].get();
+	dump << "ECE Flag Count" << flag_counts["ECE"].get();
+
+	dump << "Down/Up Ratio" << get_down_up_ratio();
+	dump << "Average Packet Size" << get_avg_pkt_size();
+	dump << "Avg Fwd Segment Size" << get_favg_seg_size();
+	dump << "Avg Bwd Segment Size" << get_bavg_seg_size();
+
+	dump << "Fwd Avg Bytes/Bulk" << get_favg_bytes_per_bulk();
+	dump << "Fwd Avg Packets/Bulk" << get_favg_packets_per_bulk();
+	dump << "Fwd Avg Bulk Rate" << get_favg_bulk_rate();
+	dump << "Bwd Avg Bytes/Bulk" << get_bavg_bytes_per_bulk();
+	dump << "Bwd Avg Packets/Bulk" << get_bavg_packets_per_bulk();
+	dump << "Bwd Avg Bulk Rate" << get_bavg_bulk_rate();
+
+	dump << "Subflow Fwd Packets" << get_sflow_fpackets();
+	dump << "Subflow Fwd Bytes" << get_sflow_fbytes();
+	dump << "Subflow Bwd Packets" << get_sflow_bpackets();
+	dump << "Subflow Bwd Bytes" << get_sflow_bbytes();
+
+	dump << "Init_Win_bytes_forward" << init_win_bytes_forward;
+	dump << "Init_Win_bytes_backward" << init_win_bytes_backward;
+	dump << "act_data_pkt_fwd" << act_data_pkt_forward;
+	dump << "min_seg_size_forward" << min_seg_size_forward;
+
+	if(this->flow_active.get_count() > 0) {
+		dump << "Active Mean" << flow_active.get_avg();
+		dump << "Active Std" << flow_active.get_standard_deviation();
+		dump << "Active Max" << flow_active.get_max();
+		dump << "Active Min" << flow_active.get_min();
+	}
+	else {
+		dump << "Active Mean" << 0;
+		dump << "Active Std" << 0;
+		dump << "Active Max" << 0;
+		dump << "Active Min" << 0;
+	}
+
+	if(this->flow_idle.get_count() > 0) {
+		dump << "Idle Mean" << flow_idle.get_avg();
+		dump << "Idle Std" << flow_idle.get_standard_deviation();
+		dump << "Idle Max" << flow_idle.get_max();
+		dump << "Idle Min" << flow_idle.get_min();
+	}
+	else {
+		dump << "Idle Mean" << 0;
+		dump << "Idle Std" << 0;
+		dump << "Idle Max" << 0;
+		dump << "Idle Min" << 0;
+	}
+	dump << bsoncxx::builder::stream::close_document;
+	dump << bsoncxx::builder::stream::finalize;
+	return bsoncxx::document::value(dump);
+}

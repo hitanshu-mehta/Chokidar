@@ -45,7 +45,10 @@ private:
 
 public:
 	bool insert_doc(mongocxx::collection, bsoncxx::document::value);
-	database* get_instance();
+	static database* get_instance();
+	mongocxx::collection get_flows_collection() { return this->flows; }
+	mongocxx::collection get_attacks_collection() { return this->attacks; }
 };
+
 
 #endif

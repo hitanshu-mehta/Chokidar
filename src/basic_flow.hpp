@@ -5,6 +5,10 @@
 #include "constants.hpp"
 #include "utils.hpp"
 
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/document/value.hpp>
+#include <bsoncxx/json.hpp>
+
 #include <iostream>
 #include <map>
 #include <netinet/in.h>
@@ -105,6 +109,8 @@ public:
 	basic_flow(bool, basic_packet_info, long);
 
 	std::string dump_flow_based_features_S();
+	bsoncxx::document::value dump_flow_based_features_to_db();
+
 	long const get_flow_start_time();
 	int packet_count();
 	void first_packet(basic_packet_info);

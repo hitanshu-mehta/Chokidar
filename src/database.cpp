@@ -1,6 +1,7 @@
 #include "database.hpp"
 
-// #include <bsoncxx/document/view.hpp>
+std::mutex database::s_mutex;
+std::atomic<database*> database::s_instance;
 
 database::database() {
 	mongocxx::instance instance{};
