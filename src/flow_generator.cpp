@@ -41,7 +41,13 @@ void flow_generator::add_packet(basic_packet_info packet) {
 			if(flow.packet_count() > 1) { finished_flows[get_flow_count()] = flow; }
 
 			current_flows.erase(id);
-			current_flows[id] = basic_flow();
+			current_flows[id] = basic_flow(bidirectional,
+										   packet,
+										   flow.get_src_ip(),
+										   flow.get_dst_ip(),
+										   flow.get_src_port(),
+										   flow.get_dst_port(),
+										   this->flow_activity_timeout);
 		}
 
 		// Flow finished due FIN flag (tcp only):
@@ -88,8 +94,9 @@ int flow_generator::dump_labeled_current_flow_to_db(database* const db) {
 	int total = 0;
 	for(auto flow : current_flows) {
 		if(flow.second.packet_count() > 1) {
-			db->insert_doc(db->get_flows_collection(),
-						   flow.second.dump_flow_based_features_to_db());
+			printf("Insering\n");
+			db->get_db()->collection("flows").insert_one(
+				flow.second.dump_flow_based_features_to_db());
 			++total;
 		}
 	}

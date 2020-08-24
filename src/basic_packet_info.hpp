@@ -18,8 +18,8 @@ private:
 	net::port_t src_port;
 	net::port_t dst_port;
 	int protocol;
-	long timestamp;		// not set
-	long payload_bytes; // not set
+	long timestamp;			// not set
+	long payload_bytes = 0; // not set
 	std::string flowid = "";
 	int all_flags = 0;
 	/* --------------------  */
@@ -32,7 +32,7 @@ private:
 	bool flagCWR = false;
 	bool flagRST = false;
 	int tcp_window = 0;
-	long header_bytes;		// not set
+	long header_bytes = 0;	// not set
 	int payload_packet = 0; // not set
 
 public:
@@ -55,7 +55,7 @@ public:
 	net::port_t const get_dst_port() { return this->dst_port; }
 	std::string get_fwd_flow_id();
 	std::string get_bwd_flow_id();
-	std::string get_flow_id(); // to define
+	std::string get_flow_id();
 	int const get_tcp_window() { return this->tcp_window; }
 	long const get_header_bytes() { return this->header_bytes; }
 	long const get_timestamp() { return this->timestamp; }

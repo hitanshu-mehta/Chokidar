@@ -71,6 +71,7 @@ void packet_capture::got_packet(u_char* args,
 
 int packet_capture::sniff() {
 	fprintf(stderr, "Sniffing\n");
+	// return pcap_loop(handle, num_packets, got_packet, NULL);
 	return pcap_dispatch(handle, num_packets, got_packet, NULL);
 }
 

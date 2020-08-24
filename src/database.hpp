@@ -35,20 +35,18 @@ class database
 {
 
 private:
+	mongocxx::instance* inst;
+	mongocxx::client* c;
 	mongocxx::database db;
-	mongocxx::collection flows;
-	mongocxx::collection attacks;
+	static database* instance;
 	bool is_capped = true;
 	database();
 	static std::atomic<database*> s_instance;
 	static std::mutex s_mutex;
 
 public:
-	bool insert_doc(mongocxx::collection, bsoncxx::document::value);
 	static database* get_instance();
-	mongocxx::collection get_flows_collection() { return this->flows; }
-	mongocxx::collection get_attacks_collection() { return this->attacks; }
+	mongocxx::database* get_db() { return &this->db; }
 };
-
 
 #endif
