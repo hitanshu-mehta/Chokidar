@@ -49,8 +49,8 @@ private:
 	int fURG_cnt;
 	int bURG_cnt;
 
-	long act_data_pkt_forward;
-	long min_seg_size_forward;
+	long act_data_pkt_forward = 0;
+	long min_seg_size_forward = 0;
 	int init_win_bytes_forward = 0;
 	int init_win_bytes_backward = 0;
 
