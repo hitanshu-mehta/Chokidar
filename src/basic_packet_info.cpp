@@ -1,4 +1,4 @@
-#include "basic_packet_info.h"
+#include "basic_packet_info.hpp"
 #include <arpa/inet.h>
 #include <sstream>
 
@@ -9,9 +9,10 @@ basic_packet_info::basic_packet_info(
 	, src_port(src_pt)
 	, dst_port(dst_pt)
 	, protocol(proto)
-	, timestamp(ts){
-
-	  };
+	, timestamp(ts) {
+	payload_bytes = 0;
+	header_bytes = 0;
+};
 
 std::string basic_packet_info::get_flow_id() {
 	bool forward = true;
@@ -45,6 +46,8 @@ void const basic_packet_info::print_all_info() {
 	fprintf(stderr, "Protocol: %d\n", protocol);
 	fprintf(stderr, "Timestamp: %ld\n", timestamp);
 	fprintf(stderr, "TCP window: %d\n", tcp_window);
+	fprintf(stderr, "header bytes: %ld\n", header_bytes);
+	fprintf(stderr, "payload bytes bytes: %d\n", payload_bytes);
 	// fprintf(stderr, "Flags %d\n", all_flags);
 }
 

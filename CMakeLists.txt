@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.10)
 
 # set project name
 project(IDS)
@@ -14,7 +14,7 @@ include_directories("${CMAKE_SOURCE_DIR}/mongo-cxx-driver/include/bsoncxx/v_noab
 link_directories("${CMAKE_SOURCE_DIR}/mongo-cxx-driver/lib/")
 
 
-file(GLOB all_src "${CMAKE_SOURCE_DIR}/src/*.h" "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB all_src "${CMAKE_SOURCE_DIR}/src/*.hpp" "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 

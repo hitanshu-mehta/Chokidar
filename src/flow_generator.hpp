@@ -1,8 +1,9 @@
-#ifndef FLOW_GENERATOR_H
-#define FLOW_GENERATOR_H
+#ifndef FLOW_GENERATOR_HPP
+#define FLOW_GENERATOR_HPP
 
-#include "basic_flow.h"
-#include "basic_packet_info.h"
+#include "basic_flow.hpp"
+#include "basic_packet_info.hpp"
+#include "database.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -27,7 +28,8 @@ public:
 
 	void add_packet(basic_packet_info);
 	int get_flow_count();
-	int dump_labeled_current_flow(std::string);
+	int dump_labeled_current_flow_to_file(std::string);
+	int dump_labeled_current_flow_to_db(database* const);
 };
 
 #endif

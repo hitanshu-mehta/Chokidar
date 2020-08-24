@@ -1,4 +1,4 @@
-#include "flow_generator.h"
+#include "flow_generator.hpp"
 #include <fstream>
 
 flow_generator::flow_generator(bool bidirectional, long flow_timeout, long activity_timeout) {
@@ -41,7 +41,13 @@ void flow_generator::add_packet(basic_packet_info packet) {
 			if(flow.packet_count() > 1) { finished_flows[get_flow_count()] = flow; }
 
 			current_flows.erase(id);
-			current_flows[id] = basic_flow();
+			current_flows[id] = basic_flow(bidirectional,
+										   packet,
+										   flow.get_src_ip(),
+										   flow.get_dst_ip(),
+										   flow.get_src_port(),
+										   flow.get_dst_port(),
+										   this->flow_activity_timeout);
 		}
 
 		// Flow finished due FIN flag (tcp only):
@@ -71,7 +77,7 @@ int flow_generator::get_flow_count() {
 	return this->finished_flow_count;
 }
 
-int flow_generator::dump_labeled_current_flow(std::string output_path) {
+int flow_generator::dump_labeled_current_flow_to_file(std::string output_path) {
 	std::ofstream output_file(output_path, std::ios::app);
 	int total = 0;
 	for(auto flow : current_flows) {
@@ -79,6 +85,18 @@ int flow_generator::dump_labeled_current_flow(std::string output_path) {
 			std::string tmp = flow.second.dump_flow_based_features_S();
 			std::cout << tmp << "\n";
 			output_file << tmp + "\n";
+			++total;
+		}
+	}
+	return total;
+}
+int flow_generator::dump_labeled_current_flow_to_db(database* const db) {
+	int total = 0;
+	for(auto flow : current_flows) {
+		if(flow.second.packet_count() > 1) {
+			printf("Insering\n");
+			db->get_db()->collection("flows").insert_one(
+				flow.second.dump_flow_based_features_to_db());
 			++total;
 		}
 	}

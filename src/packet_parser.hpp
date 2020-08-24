@@ -1,11 +1,11 @@
-#ifndef PACKET_PARSER_H
-#define PACKET_PARSER_H
+#ifndef PACKET_PARSER_HPP
+#define PACKET_PARSER_HPP
 
-#include "basic_packet_info.h"
-#include "ether_header.h"
-#include "ip_header.h"
-#include "tcp_header.h"
-#include "udp_header.h"
+#include "basic_packet_info.hpp"
+#include "ether_header.hpp"
+#include "ip_header.hpp"
+#include "tcp_header.hpp"
+#include "udp_header.hpp"
 #include <cstdint>
 #include <pcap.h>
 #include <vector>

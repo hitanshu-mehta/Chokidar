@@ -1,9 +1,13 @@
-#ifndef BASIC_FLOW_H
-#define BASIC_FLOW_H
+#ifndef BASIC_FLOW_HPP
+#define BASIC_FLOW_HPP
 
-#include "basic_packet_info.h"
-#include "constants.h"
-#include "utils.h"
+#include "basic_packet_info.hpp"
+#include "constants.hpp"
+#include "utils.hpp"
+
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/document/value.hpp>
+#include <bsoncxx/json.hpp>
 
 #include <iostream>
 #include <map>
@@ -105,6 +109,8 @@ public:
 	basic_flow(bool, basic_packet_info, long);
 
 	std::string dump_flow_based_features_S();
+	bsoncxx::document::value dump_flow_based_features_to_db();
+
 	long const get_flow_start_time();
 	int packet_count();
 	void first_packet(basic_packet_info);
@@ -115,6 +121,11 @@ public:
 	void update_forward_bulk(basic_packet_info, long);
 	void update_backward_bulk(basic_packet_info, long);
 	void add_packet(basic_packet_info);
+
+	in_addr get_src_ip();
+	in_addr get_dst_ip();
+	net::port_t get_src_port();
+	net::port_t get_dst_port();
 
 	double get_down_up_ratio();
 	double get_avg_pkt_size();

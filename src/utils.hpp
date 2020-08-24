@@ -1,6 +1,5 @@
-
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -30,7 +29,7 @@ private:
 
 public:
 	summary_statistics() {
-		values = std::vector<double>();
+		values = std::vector<double>(0.0);
 		sum = 0;
 	}
 	void add_value(double val) {

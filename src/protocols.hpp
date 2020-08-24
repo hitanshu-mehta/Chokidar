@@ -1,10 +1,10 @@
-#ifndef PROTOCOLS_H
-#define PROTOCOLS_H
+#ifndef PROTOCOLS_HPP
+#define PROTOCOLS_HPP
 
-#include "ether_header.h"
-#include "ip_header.h"
-#include "tcp_header.h"
-#include "udp_header.h"
+#include "ether_header.hpp"
+#include "ip_header.hpp"
+#include "tcp_header.hpp"
+#include "udp_header.hpp"
 
 class protocols
 {

@@ -1,4 +1,4 @@
-#include "packet_capture.h"
+#include "packet_capture.hpp"
 
 packet_capture::packet_capture() {
 	int num_packets = 30;
@@ -71,6 +71,7 @@ void packet_capture::got_packet(u_char* args,
 
 int packet_capture::sniff() {
 	fprintf(stderr, "Sniffing\n");
+	// return pcap_loop(handle, num_packets, got_packet, NULL);
 	return pcap_dispatch(handle, num_packets, got_packet, NULL);
 }
 

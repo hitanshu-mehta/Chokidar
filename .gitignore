@@ -9,3 +9,4 @@ dataset/*
 resources/*
 build/*
 nsl-kdd-classification.ipynb
+tmp.py
