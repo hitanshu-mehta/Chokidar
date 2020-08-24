@@ -85,17 +85,22 @@ bool packet_parser::parse() {
 	pkt.set_src(ip->ip_src);
 	pkt.set_dst(ip->ip_dst);
 	pkt.set_protocol(ip->ip_p);
-	pkt.set_timestamp(header->ts.tv_sec);
-
+	pkt.set_timestamp(header->ts.tv_usec);
 	bool captured = true;
 	switch(ip->ip_p) {
 	case IPPROTO_TCP:
 		// printf("   Protocol: TCP\n");
 		captured = handle_tcp(&pkt);
+		pkt.set_payload_bytes(ntohs(ip->ip_len) - (size_ip + size_tcp));
+		pkt.set_header_bytes(size_tcp);
 		break;
 	case IPPROTO_UDP:
 		// printf("   Protocol: UDP\n");
 		captured = handle_udp(&pkt);
+		pkt.set_header_bytes(8); // fix header of 8 bytes
+
+		// len contains size (in bytes) of udp pkt (header + data)
+		pkt.set_payload_bytes(udp->len - 8);
 		break;
 	// case IPPROTO_ICMP:
 	// 	printf("   Protocol: ICMP\n");

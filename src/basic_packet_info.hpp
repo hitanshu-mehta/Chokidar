@@ -18,8 +18,8 @@ private:
 	net::port_t src_port;
 	net::port_t dst_port;
 	int protocol;
-	long timestamp;			// not set
-	long payload_bytes = 0; // not set
+	long timestamp; // not set
+	long payload_bytes = 0;
 	std::string flowid = "";
 	int all_flags = 0;
 	/* --------------------  */
@@ -32,8 +32,8 @@ private:
 	bool flagCWR = false;
 	bool flagRST = false;
 	int tcp_window = 0;
-	long header_bytes = 0;	// not set
-	int payload_packet = 0; // not set
+	long header_bytes = 0; // not set
+	int payload_packet = 0;
 
 public:
 	basic_packet_info(){};
@@ -70,6 +70,8 @@ public:
 	void set_protocol(int protocol) { this->protocol = protocol; }
 	void set_timestamp(long timestamp) { this->timestamp = timestamp; }
 	void set_TCPwindow(int TCPwindow) { this->tcp_window = TCPwindow; }
+	void set_payload_bytes(long bytes) { this->payload_bytes = bytes; }
+	void set_header_bytes(long bytes) { this->header_bytes = bytes; }
 
 	void set_flagFIN(bool flagFIN) { this->flagFIN = flagFIN; }
 	void set_flagPSH(bool flagPSH) { this->flagPSH = flagPSH; }
