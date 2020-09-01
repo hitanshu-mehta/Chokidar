@@ -609,6 +609,7 @@ std::string basic_flow::dump_flow_based_features_S() {
 bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
 
 	long flow_duration = flow_last_seen - flow_start_time;
+	if(flow_duration < 0) flow_duration = 0;
 	std::time_t t_c = std::chrono::system_clock::to_time_t(
 		std::chrono::system_clock::time_point{std::chrono::seconds(this->flow_start_time)});
 	// dump << "Timestamp" << std::put_time(std::localtime(&t_c), "%d/%m/%Y %T");
@@ -691,7 +692,7 @@ bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
 		<< "Source Port" << this->src_port 
 		<< "Destination IP" << inet_ntoa(this->dst) 
 		<< "Destination Port" << this->dst_port
-		<< "Protocol" << this->protocol
+		// << "Protocol" << this->protocol
 		<< "Flow Duration" << flow_duration
 	 	<< "Total Fwd Packets" << (long)fwd_pkt_stats.get_count()
 	 	<< "Total Backward Packets" << (long)bwd_pkt_stats.get_count()
@@ -701,12 +702,16 @@ bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
 		<< "Fwd Packet Length Min" << fwd_pkt_stats_min
 		<< "Fwd Packet Length Mean" << fwd_pkt_stats_avg
 		<< "Fwd Packet Length Std" << fwd_pkt_stats_std
-		<< "Fwd Packet Length Max" << bwd_pkt_stats_max
-		<< "Fwd Packet Length Min" << bwd_pkt_stats_min
-		<< "Fwd Packet Length Mean" << bwd_pkt_stats_avg
-		<< "Fwd Packet Length Std" << bwd_pkt_stats_std
+		<< "Bwd Packet Length Max" << bwd_pkt_stats_max
+		<< "Bwd Packet Length Min" << bwd_pkt_stats_min
+		<< "Bwd Packet Length Mean" << bwd_pkt_stats_avg
+		<< "Bwd Packet Length Std" << bwd_pkt_stats_std
 		<< "Flow Bytes/s" << flow_bytes_s
-		<< "Flow Packets/s"<<flow_packets_s
+		<< "Flow Packets/s"<< flow_packets_s
+		<<"Flow IAT Mean"<< flow_IAT.get_avg()
+		<<"Flow IAT Std" << flow_IAT.get_standard_deviation()
+		<<"Flow IAT Max"<< flow_IAT.get_max()
+		<<"Flow IAT Min" << flow_IAT.get_min()
 		<< "Fwd IAT Total" << fwd_iat_sum
 		<< "Fwd IAT Mean" << fwd_iat_avg
 		<< "Fwd IAT Std" << fwd_iat_std
@@ -742,6 +747,7 @@ bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
 		<< "Average Packet Size" << get_avg_pkt_size()
 		<< "Avg Fwd Segment Size" << get_favg_seg_size()
 		<< "Avg Bwd Segment Size" << get_bavg_seg_size()
+		<< "Fwd Header Length_1" << fwd_pkt_stats.get_count()
 		<< "Fwd Avg Bytes/Bulk" << get_favg_bytes_per_bulk()
 		<< "Fwd Avg Packets/Bulk" << get_favg_packets_per_bulk()
 		<< "Fwd Avg Bulk Rate" << get_favg_bulk_rate()
