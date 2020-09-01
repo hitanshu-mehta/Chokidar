@@ -2,11 +2,14 @@
 !*.*
 !*/
 !.*
+*.csv*
 .vscode/*
 docs/*
 venv/*
 dataset/*
 resources/*
 build/*
-nsl-kdd-classification.ipynb
+*.ipynb
 tmp.py
+node_modules
+__pycache__/
