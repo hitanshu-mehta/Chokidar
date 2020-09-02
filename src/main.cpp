@@ -11,6 +11,11 @@
 #include <string.h>
 #include <vector>
 
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QWidget>
+
+#include "ui/ui_mainwindow.h"
+
 #ifdef WINDOWS
 	#include <direct.h>
 	#define GetCurrentDir _getcwd
@@ -26,35 +31,41 @@ std::string get_curr_working_dir() {
 	return current_working_dir;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+	QApplication app(argc, argv);
+	QMainWindow win;
+	Ui::MainWindow ui;
+	ui.setupUi(&win);
 
-	pybind11::scoped_interpreter guard{};
-	std::vector<basic_packet_info> buffer;
+	win.show();
+	// pybind11::scoped_interpreter guard{};
+	// std::vector<basic_packet_info> buffer;
+	// // auto sys = pybind11::module::import("sys");
+
+	// std::string curr_path = get_curr_working_dir();
+	// curr_path = curr_path;
+
+	// // std::cout << curr_path << std::endl;
+
 	// auto sys = pybind11::module::import("sys");
+	// sys.attr("path").attr("append")(curr_path + "/model"); // add python modules to PATH
+	// sys.attr("path").attr("append")(
+	// 	"../venv/lib/python3.8/site-packages"); // add python modules(virtual environment) to PATH
 
-	std::string curr_path = get_curr_working_dir();
-	curr_path = curr_path;
+	// auto inference = pybind11::module::import("inference");
 
-	// std::cout << curr_path << std::endl;
+	// char* filter = strdup(
+	// 	"ip and not src host 127.0.0.1 and not port 27017"); // mongodb client runs on port 27017
+	// database* const db = database::get_instance();
+	// packet_capture_engine(buffer, filter, 100, 1000, true);
+	// flow_generator_engine(120000000L, 5000000L, "/home/hitanshu/output.txt", buffer);
+	// flow_generator_engine(120000000L, 5000000L, db, buffer);
 
-	auto sys = pybind11::module::import("sys");
-	sys.attr("path").attr("append")(curr_path + "/model"); // add python modules to PATH
-	sys.attr("path").attr("append")(
-		"../venv/lib/python3.8/site-packages"); // add python modules(virtual environment) to PATH
+	// pybind11::object obj = inference.attr("load_model_and_infer")();
 
-	auto inference = pybind11::module::import("inference");
-
-	char* filter = strdup(
-		"ip and not src host 127.0.0.1 and not port 27017"); // mongodb client runs on port 27017
-	database* const db = database::get_instance();
-	packet_capture_engine(buffer, filter, 100, 1000, true);
-	flow_generator_engine(120000000L, 5000000L, "/home/hitanshu/output.txt", buffer);
-	flow_generator_engine(120000000L, 5000000L, db, buffer);
-
-	pybind11::object obj = inference.attr("load_model_and_infer")();
-
-	std::pair<std::vector<int>, std::vector<int>> res =
-		obj.cast<std::pair<std::vector<int>, std::vector<int>>>();
-	// for(auto i : res.first) { std::cout << i << "\n"; }
-	// for(auto i : res.second) { std::cout << i << "\n"; }
+	// std::pair<std::vector<int>, std::vector<int>> res =
+	// 	obj.cast<std::pair<std::vector<int>, std::vector<int>>>();
+	// // for(auto i : res.first) { std::cout << i << "\n"; }
+	// // for(auto i : res.second) { std::cout << i << "\n"; }
+	return app.exec();
 }
