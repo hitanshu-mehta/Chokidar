@@ -20,8 +20,8 @@ void flow_generator_engine(long flow_timeout,
 						   long activity_timeout,
 						   database* const db,
 						   std::vector<basic_packet_info>& buffer) {
-	printf("generating flows\n");
 
+	printf("generating flows\n");
 	flow_generator flow_gen = flow_generator(true, flow_timeout, activity_timeout);
 	_flow_generator_engine(flow_gen, buffer);
 

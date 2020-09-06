@@ -63,6 +63,7 @@ void packet_capture::got_packet(u_char* args,
 								const struct pcap_pkthdr* header,
 								const u_char* packet) {
 	// packet_capture* sniffer = reinterpret_cast<packet_capture*>(args);
+	printf("got packet\n");
 	parser.set_args(args);
 	parser.set_header(header);
 	parser.set_packet(packet);

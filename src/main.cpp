@@ -1,5 +1,4 @@
 #include "basic_packet_info.hpp"
-#include "database.hpp"
 #include "flow_generator_engine.hpp"
 #include "packet_capture_engine.hpp"
 
@@ -11,10 +10,19 @@
 #include <string.h>
 #include <vector>
 
+#include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLCDNumber>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPlainTextEdit>
+#include <QtWidgets/QProgressBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
-#include "ui/ui_mainwindow.h"
+#include "mainwindow.h"
 
 #ifdef WINDOWS
 	#include <direct.h>
@@ -33,11 +41,9 @@ std::string get_curr_working_dir() {
 
 int main(int argc, char* argv[]) {
 	QApplication app(argc, argv);
-	QMainWindow win;
-	Ui::MainWindow ui;
-	ui.setupUi(&win);
+	main_window main_win;
+	main_win.show();
 
-	win.show();
 	// pybind11::scoped_interpreter guard{};
 	// std::vector<basic_packet_info> buffer;
 	// // auto sys = pybind11::module::import("sys");

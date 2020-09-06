@@ -5,26 +5,75 @@ project(IDS)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
+
+# Find includes in the build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR})
 set(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/mongo-cxx-driver")
+set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/mongo-cxx-driver)
+set(SRC_PATH ${CMAKE_SOURCE_DIR}/src)
+set(UI_PATH ${SRC_PATH}/ui)
+set(WORKER_PATH ${SRC_PATH}/worker)
+
 
 add_subdirectory(pybind11)
-include_directories("${CMAKE_SOURCE_DIR}/mongo-cxx-driver/include/mongocxx/v_noabi/")
-include_directories("${CMAKE_SOURCE_DIR}/mongo-cxx-driver/include/bsoncxx/v_noabi/")
-link_directories("${CMAKE_SOURCE_DIR}/mongo-cxx-driver/lib/")
+include_directories(${CMAKE_SOURCE_DIR}/mongo-cxx-driver/include/mongocxx/v_noabi/)
+include_directories(${CMAKE_SOURCE_DIR}/mongo-cxx-driver/include/bsoncxx/v_noabi/)
+link_directories(${CMAKE_SOURCE_DIR}/mongo-cxx-driver/lib/)
 
 
-file(GLOB all_src "${CMAKE_SOURCE_DIR}/src/*/*.hpp" "${CMAKE_SOURCE_DIR}/src/ui/*.h" "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(PCAP REQUIRED)
 find_package(mongocxx REQUIRED)
 find_package(bsoncxx REQUIRED)
 
-add_executable(IDS ${all_src})
 
-target_link_libraries(IDS mongocxx bsoncxx pybind11::embed ${PCAP_LIBRARY} Qt5::Widgets)
+set(project_source
+    ${SRC_PATH}/main.cpp
+    ${SRC_PATH}/mainwindow.cpp
+    ${SRC_PATH}/packet_capture.cpp
+    ${SRC_PATH}/packet_capture_engine.cpp
+    ${SRC_PATH}/packet_parser.cpp
+    ${SRC_PATH}/basic_flow.cpp
+    ${SRC_PATH}/basic_packet_info.cpp
+    ${SRC_PATH}/flow_generator.cpp
+    ${SRC_PATH}/flow_generator_engine.cpp
+    ${SRC_PATH}/database.cpp
+    ${WORKER_PATH}/packet_capture_worker.cpp
+    )
+
+set(project_headers
+    ${SRC_PATH}/packet_capture.hpp
+    ${SRC_PATH}/packet_capture_engine.hpp
+    ${SRC_PATH}/packet_parser.hpp
+    ${SRC_PATH}/basic_flow.hpp
+    ${SRC_PATH}/basic_packet_info.hpp
+    ${SRC_PATH}/flow_features.hpp
+    ${SRC_PATH}/flow_generator.hpp
+    ${SRC_PATH}/flow_generator_engine.hpp
+    ${SRC_PATH}/constants.hpp
+    ${SRC_PATH}/ether_header.hpp
+    ${SRC_PATH}/ip_header.hpp
+    ${SRC_PATH}/protocols.hpp
+    ${SRC_PATH}/tcp_header.hpp
+    ${SRC_PATH}/udp_header.hpp
+    ${SRC_PATH}/utils.hpp
+    ${WORKER_PATH}/packet_capture_worker.h
+    ${SRC_PATH}/mainwindow.h
+)
+
+set (project_headers_mac ${SRC_PATH}/mainwindow.h ${WORKER_PATH}/packet_capture_worker.h)
+
+set(project_ui ${UI_PATH}/mainwindow.ui)
+
+qt5_wrap_ui(project_headers_wrapped ${project_ui})
+qt5_wrap_cpp(project_source_mac ${project_headers_mac})
+
+add_executable(${PROJECT_NAME} ${project_source} ${project_headers} ${project_headers_wrapped} ${project_source_mac})
+
+target_link_libraries(${PROJECT_NAME} ${PCAP_LIBRARY} mongocxx bsoncxx pybind11::embed Qt5::Widgets Qt5::Core Qt5::Gui)
