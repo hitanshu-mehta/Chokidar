@@ -75,9 +75,16 @@ bool packet_parser::handle_udp(basic_packet_info* pkt) {
 	return true;
 }
 
+void packet_parser::update_stats(bool captured, basic_packet_info* pkt) {
+	session_stats* stats = session_stats::get_instance();
+	if(captured) stats->add_no_pkts_captured(1);
+	else
+		stats->add_no_pkts_discarded(1);
+	stats->add_to_total_bytes(pkt->get_payload_bytes());
+}
+
 bool packet_parser::parse() {
 	set_ether();
-	session_stats* stats = session_stats::get_instance();
 
 	if(!set_ip()) {
 		fprintf(stderr, "invalid ip\n");
@@ -117,11 +124,8 @@ bool packet_parser::parse() {
 	if(captured) {
 		pkt.set_id();
 		basic_pkts.push_back(pkt);
-		stats->add_no_pkts_captured(1);
 	}
-	else {
-		stats->add_no_pkts_discarded(1);
-	}
+	update_stats(captured, &pkt);
 
 	return captured;
 }

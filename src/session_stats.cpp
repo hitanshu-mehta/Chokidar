@@ -8,6 +8,10 @@ void session_stats::add_no_pkts_captured(long pkts) { no_pkts_captured += pkts; 
 
 void session_stats::add_no_pkts_discarded(long pkts) { no_pkts_discarded += pkts; }
 
+void session_stats::add_to_total_bytes(long bytes) { total_bytes += bytes; }
+
+long const session_stats::get_total_bytes() { return total_bytes; }
+
 long const session_stats::get_no_pkts_captured() { return no_pkts_captured; }
 
 long const session_stats::get_no_pkts_discarded() { return no_pkts_discarded; }

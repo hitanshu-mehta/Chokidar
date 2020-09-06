@@ -10,12 +10,15 @@ main_window::main_window(QMainWindow* parent)
 	filter = strdup(
 		"ip and not src host 127.0.0.1 and not port 27017"); // mongodb client runs on port 27017
 
-	QObject::connect(ui->capture_button, &QPushButton::toggled, this, &main_window::handle_button);
+	QObject::connect(
+		ui->capture_button, &QPushButton::toggled, this, &main_window::handle_capture_button);
+	QObject::connect(
+		ui->done_button, &QPushButton::pressed, this, &main_window::handle_done_button);
 }
 
 main_window::~main_window() { delete ui; }
 
-void main_window::handle_button() {
+void main_window::handle_capture_button() {
 
 	if(ui->capture_button->isChecked()) {
 		if(!start) {
@@ -38,3 +41,5 @@ void main_window::handle_button() {
 	}
 	printf("button pressed\n");
 }
+
+void main_window::handle_done_button() { }

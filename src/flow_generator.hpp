@@ -4,7 +4,6 @@
 #include "basic_flow.hpp"
 #include "basic_packet_info.hpp"
 #include "database.hpp"
-#include "session_stats.hpp"
 
 #include <map>
 #include <string>
@@ -32,7 +31,6 @@ public:
 	int get_flow_count();
 	int dump_labeled_current_flow_to_file(std::string);
 	int dump_labeled_current_flow_to_db(database* const);
-	void update_app_sesssion_statistics(session_stats*, int);
 };
 
 #endif

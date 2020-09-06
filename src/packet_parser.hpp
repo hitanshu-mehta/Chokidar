@@ -46,6 +46,8 @@ public:
 	bool handle_udp(basic_packet_info*);
 
 	bool parse();
+
+	void update_stats(bool, basic_packet_info*);
 };
 
 #endif

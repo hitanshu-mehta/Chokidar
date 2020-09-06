@@ -11,6 +11,8 @@ class ui_reload
 	Ui::MainWindow* ui;
 	callback_timer* timer;
 
+	long no_pkts = 0;
+	long total_bytes = 0;
 	void update();
 
 public:

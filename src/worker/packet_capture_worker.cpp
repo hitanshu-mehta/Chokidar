@@ -21,7 +21,7 @@ void packet_capture_worker::sniff() {
 		}
 		p_engine->sniff();
 		++count;
-		if(count >= 1000) {
+		if(count >= 100) {
 			flow_generator_engine(120000000L, 5000000L, db, *buffer);
 			buffer->clear();
 			count = 0;

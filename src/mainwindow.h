@@ -26,7 +26,8 @@ public:
 	~main_window();
 
 public slots:
-	void handle_button();
+	void handle_capture_button();
+	void handle_done_button();
 };
 
 #endif

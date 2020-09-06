@@ -13,6 +13,7 @@ class session_stats
 private:
 	long no_pkts_captured = 0;
 	long no_pkts_discarded = 0;
+	long total_bytes = 0;
 
 	static session_stats* instance;
 	session_stats();
@@ -22,8 +23,12 @@ private:
 public:
 	void add_no_pkts_captured(long);
 	void add_no_pkts_discarded(long);
+	void add_to_total_bytes(long);
+
 	long const get_no_pkts_captured();
 	long const get_no_pkts_discarded();
+	long const get_total_bytes();
+
 	static session_stats* get_instance();
 };
 
