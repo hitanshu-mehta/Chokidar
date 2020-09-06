@@ -1,4 +1,5 @@
 #include "packet_parser.hpp"
+#include "session_stats.hpp"
 
 #include <arpa/inet.h>
 #include <bitset>
@@ -76,6 +77,7 @@ bool packet_parser::handle_udp(basic_packet_info* pkt) {
 
 bool packet_parser::parse() {
 	set_ether();
+	session_stats* stats = session_stats::get_instance();
 
 	if(!set_ip()) {
 		fprintf(stderr, "invalid ip\n");
@@ -109,11 +111,16 @@ bool packet_parser::parse() {
 	// 	printf("   Protocol: IP\n");
 	// 	return;
 	default:
-		return captured = false;
+		captured = false;
 	}
+
 	if(captured) {
 		pkt.set_id();
 		basic_pkts.push_back(pkt);
+		stats->add_no_pkts_captured(1);
+	}
+	else {
+		stats->add_no_pkts_discarded(1);
 	}
 
 	return captured;

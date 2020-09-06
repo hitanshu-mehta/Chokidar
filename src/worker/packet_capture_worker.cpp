@@ -1,5 +1,7 @@
 #include "packet_capture_worker.h"
+
 #include "../flow_generator_engine.hpp"
+#include "ui_reload_worker.hpp"
 
 packet_capture_worker::packet_capture_worker(std::vector<basic_packet_info>& buff,
 											 char* filter,
@@ -22,6 +24,7 @@ void packet_capture_worker::sniff() {
 		if(count >= 1000) {
 			flow_generator_engine(120000000L, 5000000L, db, *buffer);
 			buffer->clear();
+			count = 0;
 		}
 	}
 }

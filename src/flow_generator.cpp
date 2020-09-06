@@ -90,9 +90,15 @@ int flow_generator::dump_labeled_current_flow_to_file(std::string output_path) {
 	}
 	return total;
 }
+
 int flow_generator::dump_labeled_current_flow_to_db(database* const db) {
 	int total = 0;
+
+	session_stats* stats = session_stats::get_instance();
+
 	for(auto flow : current_flows) {
+		// update_app_sesssion_statistics(stats, flow.second.packet_count());
+
 		if(flow.second.packet_count() > 1) {
 			printf("Insering\n");
 			db->get_db()->collection("flows").insert_one(
@@ -101,4 +107,8 @@ int flow_generator::dump_labeled_current_flow_to_db(database* const db) {
 		}
 	}
 	return total;
+}
+
+void flow_generator::update_app_sesssion_statistics(session_stats* stats, int add_c) {
+	stats->add_no_pkts_captured(add_c);
 }

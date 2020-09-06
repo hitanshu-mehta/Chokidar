@@ -1,9 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "worker/ui_reload_worker.hpp"
 
 main_window::main_window(QMainWindow* parent)
 	: QMainWindow(parent)
-	, ui(new Ui::MainWindow) {
+	, ui(new Ui::MainWindow)
+	, start(false) {
 	ui->setupUi(this);
 	filter = strdup(
 		"ip and not src host 127.0.0.1 and not port 27017"); // mongodb client runs on port 27017
@@ -16,6 +18,10 @@ main_window::~main_window() { delete ui; }
 void main_window::handle_button() {
 
 	if(ui->capture_button->isChecked()) {
+		if(!start) {
+			start = true;
+			ui_reload* ui_r = new ui_reload(this->ui);
+		}
 		ui->statusbar->showMessage(tr("Sniffing..."));
 		ui->capture_button->setText("Stop Capturing");
 

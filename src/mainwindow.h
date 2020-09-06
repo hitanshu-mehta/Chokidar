@@ -19,7 +19,7 @@ class main_window : public QMainWindow
 	std::vector<basic_packet_info> buffer;
 	char* filter;
 	Ui::MainWindow* ui;
-	bool sniff;
+	bool start;
 
 public:
 	explicit main_window(QMainWindow* parent = nullptr);

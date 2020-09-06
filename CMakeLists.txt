@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.1.0)
 project(IDS)
 
 set(CMAKE_CXX_STANDARD 17)
-
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 
 # Find includes in the build directories
@@ -44,7 +44,9 @@ set(project_source
     ${SRC_PATH}/flow_generator.cpp
     ${SRC_PATH}/flow_generator_engine.cpp
     ${SRC_PATH}/database.cpp
+    ${SRC_PATH}/session_stats.cpp
     ${WORKER_PATH}/packet_capture_worker.cpp
+    ${WORKER_PATH}/ui_reload_worker.cpp
     )
 
 set(project_headers
@@ -63,8 +65,11 @@ set(project_headers
     ${SRC_PATH}/tcp_header.hpp
     ${SRC_PATH}/udp_header.hpp
     ${SRC_PATH}/utils.hpp
-    ${WORKER_PATH}/packet_capture_worker.h
+    ${SRC_PATH}/session_stats.hpp
     ${SRC_PATH}/mainwindow.h
+    ${WORKER_PATH}/packet_capture_worker.h
+    ${WORKER_PATH}/callback_timer.hpp
+    ${WORKER_PATH}/ui_reload_worker.hpp
 )
 
 set (project_headers_mac ${SRC_PATH}/mainwindow.h ${WORKER_PATH}/packet_capture_worker.h)
