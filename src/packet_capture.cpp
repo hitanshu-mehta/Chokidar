@@ -56,6 +56,10 @@ int packet_capture::compile_filter_expression() {
 	return pcap_compile(handle, &fp, filter_exp, 0, net);
 }
 
+int packet_capture::compile_filter_expression(char* filter) {
+	return pcap_compile(handle, &fp, filter, 0, net);
+}
+
 int packet_capture::apply_filter() { return pcap_setfilter(handle, &fp); }
 
 /* TO CHANGE */

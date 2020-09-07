@@ -30,6 +30,7 @@ public:
 	void sniff();
 	explicit packet_capture_worker(){};
 	~packet_capture_worker(){};
+	packet_capture_engine* get_engine();
 };
 
 #endif

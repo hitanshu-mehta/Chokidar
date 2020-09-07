@@ -20,6 +20,7 @@ private:
 public:
 	packet_capture_engine(std::vector<basic_packet_info>&);
 	packet_capture_engine(std::vector<basic_packet_info>&, char*, int, int, bool);
+	packet_capture* get_packet_capture();
 	void sniff();
 };
 

@@ -41,8 +41,9 @@ void packet_capture_engine::sniff() {
 	printf("\nCapture complete.\n");
 }
 
+packet_capture* packet_capture_engine::get_packet_capture() { return capture; }
+
 void packet_capture_engine::init() {
-	printf("here\n");
 
 	capture = new packet_capture(filter_exp, num_pkts, timeout, is_promiscious);
 

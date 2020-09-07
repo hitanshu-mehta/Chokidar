@@ -28,3 +28,5 @@ void packet_capture_worker::sniff() {
 		}
 	}
 }
+
+packet_capture_engine* packet_capture_worker::get_engine() { return p_engine; }

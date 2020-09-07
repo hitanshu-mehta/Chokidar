@@ -14,6 +14,9 @@ private:
 	long no_pkts_captured = 0;
 	long no_pkts_discarded = 0;
 	long total_bytes = 0;
+	long tcp_count = 0;
+	long udp_count = 0;
+	long ip_count = 0;
 
 	static session_stats* instance;
 	session_stats();
