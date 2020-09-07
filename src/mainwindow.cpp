@@ -1,27 +1,44 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "worker/ui_reload_worker.hpp"
 
 #include <pcap.h>
 
+#include <QMessageBox>
 #include <QString>
+
 #include <string>
+
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLegend>
+#include <QtCharts/QValueAxis>
 
 main_window::main_window(QMainWindow* parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow)
-	, start(false) {
+	, chart(new Chart)
+	, start(false)
+	, is_sniffing(false) {
+
 	ui->setupUi(this);
-	filter = strdup(
-		"ip and not src host 127.0.0.1 and not port 27017"); // mongodb client runs on port 27017
+
+	// create charts
+	create_protocol_chart();
+	chart->setTitle("Network Utilization - 1 Hour Window (1 sec average)");
+	chart->legend()->hide();
+	chart->setAnimationOptions(QChart::AllAnimations);
+	ui->Mbits_graph->setChart(chart);
+
+	filter =
+		strdup("not ip src host 127.0.0.1 and not port 27017"); // mongodb client runs on port 27017
 
 	QObject::connect(
 		ui->capture_button, &QPushButton::toggled, this, &main_window::handle_capture_button);
 	QObject::connect(
 		ui->done_button, &QPushButton::pressed, this, &main_window::handle_done_button);
 }
-
-main_window::~main_window() { delete ui; }
 
 void main_window::handle_capture_button() {
 
@@ -35,42 +52,149 @@ void main_window::handle_capture_button() {
 void main_window::stop_packet_capture_worker() {
 
 	printf("Stop capturing\n");
-	ui->capture_button->setText("Start Capturing");
+	p_worker->requestInterruption();
 
-	if(p_worker->isRunning()) p_worker->requestInterruption();
-	p_worker->exit();
+	while(p_worker->isRunning()) { };
+	p_worker->quit();
 
 	buffer.clear();
 
 	ui->statusbar->clearMessage();
+	ui->capture_button->setText("Start Capturing");
+	ui->capture_button->setDown(false);
+
+	is_sniffing = false;
 }
 
 void main_window::start_packet_capture_worker() {
-	if(!start) {
-		start = true;
-		ui_reload* ui_r = new ui_reload(this->ui);
-	}
+
 	ui->statusbar->showMessage(tr("Sniffing..."));
 	ui->capture_button->setText("Stop Capturing");
+	ui->capture_button->setDown(true);
+	if(!start) {
+		start = true;
+		ui_r = new ui_reload(this->ui);
+		// g_r = new graphs_reload(this->ui);
+
+		p_worker = new packet_capture_worker(buffer, filter, 100, 1000, true);
+		p_worker->start();
+		is_sniffing = true;
+		return;
+	}
+	while(!p_worker->isFinished()) { };
+	delete p_worker;
 
 	// Start packet capture engine on a thread
 	p_worker = new packet_capture_worker(buffer, filter, 100, 1000, true);
 	p_worker->start();
+	is_sniffing = true;
+}
+
+void main_window::create_protocol_chart() {
+	QBarSet* set0 = new QBarSet("IP");
+	QBarSet* set1 = new QBarSet("TCP");
+	QBarSet* set2 = new QBarSet("UDP");
+	QBarSet* set3 = new QBarSet("ICMP");
+	QBarSet* set4 = new QBarSet("DCCP");
+	QBarSet* set5 = new QBarSet("IPv6");
+	QBarSet* set6 = new QBarSet("ARP");
+
+	*set0 << 0;
+	*set1 << 0;
+	*set2 << 0;
+	*set3 << 0;
+	*set4 << 0;
+	*set5 << 0;
+	*set6 << 0;
+
+	QBarSeries* series0 = new QBarSeries();
+	QBarSeries* series1 = new QBarSeries();
+	QBarSeries* series2 = new QBarSeries();
+	QBarSeries* series3 = new QBarSeries();
+	QBarSeries* series4 = new QBarSeries();
+	QBarSeries* series5 = new QBarSeries();
+	QBarSeries* series6 = new QBarSeries();
+	series0->append(set0);
+	series1->append(set1);
+	series2->append(set2);
+	series3->append(set3);
+	series4->append(set4);
+	series5->append(set5);
+	series6->append(set6);
+
+	QChart* protocol_chart = new QChart();
+	protocol_chart->addSeries(series0);
+	protocol_chart->addSeries(series1);
+	protocol_chart->addSeries(series2);
+	protocol_chart->addSeries(series3);
+	protocol_chart->addSeries(series4);
+	protocol_chart->addSeries(series5);
+	protocol_chart->addSeries(series6);
+	protocol_chart->setAnimationOptions(QChart::SeriesAnimations);
+	protocol_chart->setTitle("Protocals");
+
+	QStringList categories;
+	categories << "Protocols";
+	QBarCategoryAxis* axisX = new QBarCategoryAxis();
+
+	axisX->append(categories);
+	protocol_chart->addAxis(axisX, Qt::AlignBottom);
+	series0->attachAxis(axisX);
+	series1->attachAxis(axisX);
+	series2->attachAxis(axisX);
+	series3->attachAxis(axisX);
+	series4->attachAxis(axisX);
+	series5->attachAxis(axisX);
+	series6->attachAxis(axisX);
+
+	QValueAxis* axisY = new QValueAxis();
+	axisY->setRange(0, 15);
+	protocol_chart->addAxis(axisY, Qt::AlignLeft);
+	series0->attachAxis(axisY);
+	series1->attachAxis(axisY);
+	series2->attachAxis(axisY);
+	series3->attachAxis(axisY);
+	series4->attachAxis(axisY);
+	series5->attachAxis(axisY);
+	series6->attachAxis(axisY);
+
+	protocol_chart->legend()->setVisible(true);
+	protocol_chart->legend()->setAlignment(Qt::AlignBottom);
+	protocol_chart->setMargins(QMargins(0, 0, 0, 0));
+
+	ui->protocol_bar_chart->setChart(protocol_chart);
 }
 
 void main_window::handle_done_button() {
 
 	QString f = ui->filter_textedit->toPlainText();
 	char* _filter = strdup(f.toStdString().c_str());
+	bool here = false;
+
+	if(!start) {
+		start_packet_capture_worker();
+		start = true;
+		here = true;
+	}
 
 	if(p_worker->get_engine()->get_packet_capture()->compile_filter_expression(_filter) == -1) {
-		// invalid filter expression
+
+		int ret = QMessageBox::warning(
+			this,
+			tr("Invalid filter!"),
+			tr("See this page-> (https://www.tcpdump.org/manpages/pcap-filter.7.html) for packet "
+			   "filter syntax."));
+		if(here) stop_packet_capture_worker();
 		return;
 	}
 
 	filter = _filter;
 
+	if(here) stop_packet_capture_worker();
+
 	// stop packet_capture_worker if running
-	stop_packet_capture_worker();
-	start_packet_capture_worker();
+	if(is_sniffing) {
+		stop_packet_capture_worker();
+		start_packet_capture_worker();
+	}
 }

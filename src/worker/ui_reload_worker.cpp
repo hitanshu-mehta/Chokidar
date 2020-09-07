@@ -1,20 +1,35 @@
 #include "ui_reload_worker.hpp"
 #include "../database.hpp"
+#include "../graph/bar_chart.hpp"
 
 #include <bsoncxx/builder/basic/document.hpp>
 
 #include <QString>
+#include <algorithm>
 #include <string>
+
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLegend>
+#include <QtCharts/QValueAxis>
 
 ui_reload::ui_reload(Ui::MainWindow* Ui)
 	: timer(new callback_timer())
 	, ui(Ui)
 	, no_pkts(0)
 	, total_bytes(0) {
-	timer->start(1000, std::bind(&ui_reload::update, this));
+	QObject::connect(&m_timer, &QTimer::timeout, this, &ui_reload::update);
+	m_timer.setInterval(1000);
+	// timer->start(1000, std::bind(&ui_reload::update, this));
+	m_timer.start();
 }
 
+ui_reload::~ui_reload() { }
+
 void ui_reload::update() {
+	++g_timer;
 
 	database* db_c = database::get_instance();
 
@@ -37,4 +52,95 @@ void ui_reload::update() {
 	int buff_size = (int)db_c->get_db()->collection("flows").count_documents(filter.view());
 	int per = (buff_size * 100) / 5000;
 	ui->buffer_usage_bar->setValue(per);
+
+	// reload graphs at every 3 secs
+	if(g_timer == 3) {
+
+		reload_graphs(stats);
+		g_timer = 0;
+	}
+}
+
+void ui_reload::reload_graphs(session_stats* stats) {
+
+	long max_y = std::max({stats->get_ip_count(),
+						   stats->get_tcp_count(),
+						   stats->get_udp_count(),
+						   stats->get_icmp_count(),
+						   stats->get_dccp_count(),
+						   stats->get_ipv6_count(),
+						   stats->get_arp_count()});
+
+	QBarSet* set0 = new QBarSet("IP");
+	QBarSet* set1 = new QBarSet("TCP");
+	QBarSet* set2 = new QBarSet("UDP");
+	QBarSet* set3 = new QBarSet("ICMP");
+	QBarSet* set4 = new QBarSet("DCCP");
+	QBarSet* set5 = new QBarSet("IPv6");
+	QBarSet* set6 = new QBarSet("ARP");
+
+	*set0 << stats->get_ip_count();
+	*set1 << stats->get_tcp_count();
+	*set2 << stats->get_udp_count();
+	*set3 << stats->get_icmp_count();
+	*set4 << stats->get_dccp_count();
+	*set5 << stats->get_ipv6_count();
+	*set6 << stats->get_arp_count();
+
+	QBarSeries* series0 = new QBarSeries();
+	QBarSeries* series1 = new QBarSeries();
+	QBarSeries* series2 = new QBarSeries();
+	QBarSeries* series3 = new QBarSeries();
+	QBarSeries* series4 = new QBarSeries();
+	QBarSeries* series5 = new QBarSeries();
+	QBarSeries* series6 = new QBarSeries();
+	series0->append(set0);
+	series1->append(set1);
+	series2->append(set2);
+	series3->append(set3);
+	series4->append(set4);
+	series5->append(set5);
+	series6->append(set6);
+
+	QChart* protocol_chart = new QChart();
+	protocol_chart->addSeries(series0);
+	protocol_chart->addSeries(series1);
+	protocol_chart->addSeries(series2);
+	protocol_chart->addSeries(series3);
+	protocol_chart->addSeries(series4);
+	protocol_chart->addSeries(series5);
+	protocol_chart->addSeries(series6);
+	protocol_chart->setTitle("Protocals");
+	// protocol_chart->setAnimationOptions(QChart::SeriesAnimations);
+
+	QStringList categories;
+	categories << "Protocols";
+	QBarCategoryAxis* axisX = new QBarCategoryAxis();
+
+	axisX->append(categories);
+	protocol_chart->addAxis(axisX, Qt::AlignBottom);
+	series0->attachAxis(axisX);
+	series1->attachAxis(axisX);
+	series2->attachAxis(axisX);
+	series3->attachAxis(axisX);
+	series4->attachAxis(axisX);
+	series5->attachAxis(axisX);
+	series6->attachAxis(axisX);
+
+	QValueAxis* axisY = new QValueAxis();
+	axisY->setRange(0, max_y + 100);
+	protocol_chart->addAxis(axisY, Qt::AlignLeft);
+	series0->attachAxis(axisY);
+	series1->attachAxis(axisY);
+	series2->attachAxis(axisY);
+	series3->attachAxis(axisY);
+	series4->attachAxis(axisY);
+	series5->attachAxis(axisY);
+	series6->attachAxis(axisY);
+
+	protocol_chart->legend()->setVisible(true);
+	protocol_chart->legend()->setAlignment(Qt::AlignBottom);
+	protocol_chart->setMargins(QMargins(0, 0, 0, 0));
+
+	ui->protocol_bar_chart->setChart(protocol_chart);
 }

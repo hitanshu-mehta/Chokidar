@@ -9,6 +9,11 @@
 
 #include "database.hpp"
 #include "worker/packet_capture_worker.h"
+#include "worker/ui_reload_worker.hpp"
+
+#include <QtCharts/QChart>
+
+#include "Chart.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,6 +27,12 @@ class main_window : public QMainWindow
 	char* filter;
 	Ui::MainWindow* ui;
 	bool start;
+	bool is_sniffing;
+	ui_reload* ui_r;
+
+	Chart* chart;
+
+	// graphs_reload* g_r;
 	// void closeEvent(QCloseEvent* close) {
 	// 	database* db = database::get_instance();
 	// 	ui->accept();
@@ -29,7 +40,7 @@ class main_window : public QMainWindow
 
 public:
 	explicit main_window(QMainWindow* parent = nullptr);
-	~main_window();
+	void create_protocol_chart();
 
 public slots:
 	void handle_capture_button();

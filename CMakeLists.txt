@@ -16,6 +16,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/mongo-cxx-driver)
 set(SRC_PATH ${CMAKE_SOURCE_DIR}/src)
 set(UI_PATH ${SRC_PATH}/ui)
 set(WORKER_PATH ${SRC_PATH}/worker)
+set(GRAPH_PATH ${SRC_PATH}/graph)
 
 
 add_subdirectory(pybind11)
@@ -26,11 +27,12 @@ link_directories(${CMAKE_SOURCE_DIR}/mongo-cxx-driver/lib/)
 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui Charts)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(PCAP REQUIRED)
 find_package(mongocxx REQUIRED)
 find_package(bsoncxx REQUIRED)
+
 
 
 set(project_source
@@ -47,6 +49,7 @@ set(project_source
     ${SRC_PATH}/session_stats.cpp
     ${WORKER_PATH}/packet_capture_worker.cpp
     ${WORKER_PATH}/ui_reload_worker.cpp
+    ${SRC_PATH}/Chart.cpp
     )
 
 set(project_headers
@@ -70,9 +73,10 @@ set(project_headers
     ${WORKER_PATH}/packet_capture_worker.h
     ${WORKER_PATH}/callback_timer.hpp
     ${WORKER_PATH}/ui_reload_worker.hpp
+    ${SRC_PATH}/Chart.h
 )
 
-set (project_headers_mac ${SRC_PATH}/mainwindow.h ${WORKER_PATH}/packet_capture_worker.h)
+set (project_headers_mac ${SRC_PATH}/mainwindow.h ${WORKER_PATH}/packet_capture_worker.h ${WORKER_PATH}/ui_reload_worker.hpp ${SRC_PATH}/Chart.h)
 
 set(project_ui ${UI_PATH}/mainwindow.ui)
 
@@ -81,4 +85,4 @@ qt5_wrap_cpp(project_source_mac ${project_headers_mac})
 
 add_executable(${PROJECT_NAME} ${project_source} ${project_headers} ${project_headers_wrapped} ${project_source_mac})
 
-target_link_libraries(${PROJECT_NAME} ${PCAP_LIBRARY} mongocxx bsoncxx pybind11::embed Qt5::Widgets Qt5::Core Qt5::Gui)
+target_link_libraries(${PROJECT_NAME} ${PCAP_LIBRARY} mongocxx bsoncxx pybind11::embed Qt5::Widgets Qt5::Core Qt5::Gui Qt5::Charts)
