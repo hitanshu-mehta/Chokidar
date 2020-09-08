@@ -4,9 +4,12 @@
 
 #include <bsoncxx/builder/basic/document.hpp>
 
-#include <QString>
+#include <QtCore/QString>
+#include <QtCore/QVector>
+
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QBarSeries>
@@ -56,12 +59,60 @@ void ui_reload::update() {
 	// reload graphs at every 3 secs
 	if(g_timer == 3) {
 
-		reload_graphs(stats);
+		reload_protocol_graphs(stats);
+		reload_ip_graphs(stats);
 		g_timer = 0;
 	}
 }
 
-void ui_reload::reload_graphs(session_stats* stats) {
+void ui_reload::reload_ip_graphs(session_stats* stats) {
+
+	std::map<std::string, int> mp;
+	mp = stats->get_map();
+	std::vector<std::pair<int, std::string>> vec;
+
+	for(auto el : mp) vec.push_back({el.second, el.first});
+
+	sort(vec.begin(), vec.end(), [&](std::pair<int, std::string> a, std::pair<int, std::string> b) {
+		return a.first > b.first;
+	});
+
+	int limit = std::min(6, (int)vec.size());
+
+	long max_y = mp.begin()->second;
+
+	std::vector<QBarSet*> bars;
+	std::vector<QBarSeries*> series;
+
+	QChart* top_ip_chart = new QChart();
+
+	QStringList categories;
+	categories << "Top IPs";
+	QBarCategoryAxis* axisX = new QBarCategoryAxis();
+	axisX->append(categories);
+	top_ip_chart->addAxis(axisX, Qt::AlignBottom);
+
+	QValueAxis* axisY = new QValueAxis();
+	axisY->setRange(0, max_y + 100);
+	top_ip_chart->addAxis(axisY, Qt::AlignLeft);
+
+	for(int i = 0; i < limit; ++i) {
+		bars.push_back(new QBarSet(QString::fromStdString(vec[i].second)));
+		*bars[i] << vec[i].first;
+		series.push_back(new QBarSeries());
+		series[i]->append(bars[i]);
+		top_ip_chart->addSeries(series[i]);
+		series[i]->attachAxis(axisX);
+		series[i]->attachAxis(axisY);
+	}
+
+	top_ip_chart->legend()->setVisible(true);
+	top_ip_chart->legend()->setAlignment(Qt::AlignBottom);
+	top_ip_chart->setMargins(QMargins(0, 0, 0, 0));
+	ui->top_ip_chart->setChart(top_ip_chart);
+}
+
+void ui_reload::reload_protocol_graphs(session_stats* stats) {
 
 	long max_y = std::max({stats->get_ip_count(),
 						   stats->get_tcp_count(),
@@ -110,7 +161,6 @@ void ui_reload::reload_graphs(session_stats* stats) {
 	protocol_chart->addSeries(series4);
 	protocol_chart->addSeries(series5);
 	protocol_chart->addSeries(series6);
-	protocol_chart->setTitle("Protocals");
 	// protocol_chart->setAnimationOptions(QChart::SeriesAnimations);
 
 	QStringList categories;

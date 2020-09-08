@@ -96,6 +96,8 @@ void packet_parser::update_stats(bool captured, basic_packet_info* pkt) {
 	}
 
 	if(captured) {
+		std::string str(inet_ntoa(ip->ip_src));
+		stats->add_uni_ip(str, 1);
 		stats->add_to_ip_count(1);
 		stats->add_no_pkts_captured(1);
 		switch(ip->ip_p) {

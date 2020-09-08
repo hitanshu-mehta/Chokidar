@@ -16,7 +16,8 @@ class ui_reload : public QObject
 	int g_timer = 0;
 	long no_pkts = 0;
 	long total_bytes = 0;
-	void reload_graphs(session_stats*);
+	void reload_protocol_graphs(session_stats*);
+	void reload_ip_graphs(session_stats*);
 
 public slots:
 	void update();

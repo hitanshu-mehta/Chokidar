@@ -26,6 +26,7 @@ main_window::main_window(QMainWindow* parent)
 
 	// create charts
 	create_protocol_chart();
+	create_ip_chart();
 	chart->setTitle("Network Utilization - 1 Hour Window (1 sec average)");
 	chart->legend()->hide();
 	chart->setAnimationOptions(QChart::AllAnimations);
@@ -61,6 +62,13 @@ void main_window::stop_packet_capture_worker() {
 
 	ui->statusbar->clearMessage();
 	ui->capture_button->setText("Start Capturing");
+	ui->capture_button->setStyleSheet(
+		QString::fromUtf8("QPushButton{\n"
+						  "	font: 200 11pt \"Noto Sans\";\n"
+						  "	\n"
+						  "	background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:0, "
+						  "stop:0 rgba(4, 224, 0, 85), stop:1 rgba(255, 255, 255, 255));\n"
+						  "}"));
 	ui->capture_button->setDown(false);
 
 	is_sniffing = false;
@@ -71,6 +79,13 @@ void main_window::start_packet_capture_worker() {
 	ui->statusbar->showMessage(tr("Sniffing..."));
 	ui->capture_button->setText("Stop Capturing");
 	ui->capture_button->setDown(true);
+	ui->capture_button->setStyleSheet(
+		QString::fromUtf8("QPushButton{\n"
+						  "	font: 200 11pt \"Noto Sans\";\n"
+						  "	colotr:white;\n"
+						  "background-color: qlineargradient(spread:pad, x1:1, y1:0, x2:1, y2:0, "
+						  "stop:0 rgba(255, 0, 0, 116), stop:1 rgba(255, 255, 255, 255));\n"
+						  "}"));
 	if(!start) {
 		start = true;
 		ui_r = new ui_reload(this->ui);
@@ -88,6 +103,40 @@ void main_window::start_packet_capture_worker() {
 	p_worker = new packet_capture_worker(buffer, filter, 100, 1000, true);
 	p_worker->start();
 	is_sniffing = true;
+}
+
+void main_window::handle_done_button() {
+
+	QString f = ui->filter_textedit->toPlainText();
+	char* _filter = strdup(f.toStdString().c_str());
+	bool here = false;
+
+	if(!start) {
+		start_packet_capture_worker();
+		start = true;
+		here = true;
+	}
+
+	if(p_worker->get_engine()->get_packet_capture()->compile_filter_expression(_filter) == -1) {
+
+		int ret = QMessageBox::warning(
+			this,
+			tr("Invalid filter!"),
+			tr("See this page-> (https://www.tcpdump.org/manpages/pcap-filter.7.html) for packet "
+			   "filter syntax."));
+		if(here) stop_packet_capture_worker();
+		return;
+	}
+
+	filter = _filter;
+
+	if(here) stop_packet_capture_worker();
+
+	// stop packet_capture_worker if running
+	if(is_sniffing) {
+		stop_packet_capture_worker();
+		start_packet_capture_worker();
+	}
 }
 
 void main_window::create_protocol_chart() {
@@ -131,7 +180,6 @@ void main_window::create_protocol_chart() {
 	protocol_chart->addSeries(series5);
 	protocol_chart->addSeries(series6);
 	protocol_chart->setAnimationOptions(QChart::SeriesAnimations);
-	protocol_chart->setTitle("Protocals");
 
 	QStringList categories;
 	categories << "Protocols";
@@ -165,36 +213,26 @@ void main_window::create_protocol_chart() {
 	ui->protocol_bar_chart->setChart(protocol_chart);
 }
 
-void main_window::handle_done_button() {
+void main_window::create_ip_chart() {
 
-	QString f = ui->filter_textedit->toPlainText();
-	char* _filter = strdup(f.toStdString().c_str());
-	bool here = false;
+	QChart* ip_chart = new QChart();
 
-	if(!start) {
-		start_packet_capture_worker();
-		start = true;
-		here = true;
-	}
+	ip_chart->setAnimationOptions(QChart::SeriesAnimations);
 
-	if(p_worker->get_engine()->get_packet_capture()->compile_filter_expression(_filter) == -1) {
+	QStringList categories;
+	categories << "Protocols";
+	QBarCategoryAxis* axisX = new QBarCategoryAxis();
 
-		int ret = QMessageBox::warning(
-			this,
-			tr("Invalid filter!"),
-			tr("See this page-> (https://www.tcpdump.org/manpages/pcap-filter.7.html) for packet "
-			   "filter syntax."));
-		if(here) stop_packet_capture_worker();
-		return;
-	}
+	axisX->append(categories);
+	ip_chart->addAxis(axisX, Qt::AlignBottom);
 
-	filter = _filter;
+	QValueAxis* axisY = new QValueAxis();
+	axisY->setRange(0, 15);
+	ip_chart->addAxis(axisY, Qt::AlignLeft);
 
-	if(here) stop_packet_capture_worker();
+	ip_chart->legend()->setVisible(true);
+	ip_chart->legend()->setAlignment(Qt::AlignBottom);
+	ip_chart->setMargins(QMargins(0, 0, 0, 0));
 
-	// stop packet_capture_worker if running
-	if(is_sniffing) {
-		stop_packet_capture_worker();
-		start_packet_capture_worker();
-	}
+	ui->top_ip_chart->setChart(ip_chart);
 }

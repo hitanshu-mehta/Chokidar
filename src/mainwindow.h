@@ -41,6 +41,7 @@ class main_window : public QMainWindow
 public:
 	explicit main_window(QMainWindow* parent = nullptr);
 	void create_protocol_chart();
+	void create_ip_chart();
 
 public slots:
 	void handle_capture_button();

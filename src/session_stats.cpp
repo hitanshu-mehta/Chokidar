@@ -24,6 +24,8 @@ void session_stats::add_to_arp_count(long proto) { arp_count += proto; }
 
 void session_stats::add_to_ipv6_count(long proto) { ipv6_count += proto; }
 
+void session_stats::add_uni_ip(std::string ip, int cnt) { top_ip_count[ip] += cnt; }
+
 // getter methods
 
 long const session_stats::get_total_bytes() { return total_bytes; }
@@ -38,7 +40,7 @@ long const session_stats::get_dccp_count() { return dccp_count; }
 long const session_stats::get_arp_count() { return arp_count; }
 long const session_stats::get_ipv6_count() { return ipv6_count; }
 
-// ----------------
+std::map<std::string, int> session_stats::get_map() { return top_ip_count; } // ----------------
 
 session_stats::session_stats() { }
 

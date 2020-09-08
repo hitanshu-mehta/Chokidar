@@ -2,7 +2,9 @@
 #define SESSION_STATS_HPP
 
 #include <atomic>
+#include <map>
 #include <mutex>
+#include <string>
 
 /* singleton class
     We have to make this class thread safe, beacause packet_capture_thread
@@ -22,6 +24,8 @@ private:
 	long arp_count = 0;
 	long ipv6_count = 0;
 
+	std::map<std::string, int> top_ip_count;
+
 	static session_stats* instance;
 	session_stats();
 	static std::atomic<session_stats*> s_instance;
@@ -40,6 +44,8 @@ public:
 	void add_to_arp_count(long);
 	void add_to_ipv6_count(long);
 
+	void add_uni_ip(std::string, int);
+
 	long const get_no_pkts_captured();
 	long const get_no_pkts_discarded();
 	long const get_total_bytes();
@@ -51,6 +57,8 @@ public:
 	long const get_dccp_count();
 	long const get_arp_count();
 	long const get_ipv6_count();
+
+	std::map<std::string, int> get_map();
 
 	static session_stats* get_instance();
 };
