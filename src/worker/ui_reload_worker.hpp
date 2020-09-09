@@ -5,14 +5,11 @@
 #include "ui_mainwindow.h"
 #include <QtCore/QTimer>
 
-#include "callback_timer.hpp"
-
 class ui_reload : public QObject
 {
 	Q_OBJECT
 	QTimer m_timer;
 	Ui::MainWindow* ui;
-	callback_timer* timer;
 	int g_timer = 0;
 	long no_pkts = 0;
 	long total_bytes = 0;

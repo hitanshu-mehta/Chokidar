@@ -8,10 +8,14 @@
 #include <QThread>
 
 #include "database.hpp"
+
+#include "worker/inference_worker.hpp"
 #include "worker/packet_capture_worker.h"
 #include "worker/ui_reload_worker.hpp"
 
 #include <QtCharts/QChart>
+
+#include <string>
 
 #include "Chart.h"
 
@@ -28,18 +32,16 @@ class main_window : public QMainWindow
 	Ui::MainWindow* ui;
 	bool start;
 	bool is_sniffing;
+
+	std::string curr_path;
+
 	ui_reload* ui_r;
+	inference_worker* infer_w;
 
 	Chart* chart;
 
-	// graphs_reload* g_r;
-	// void closeEvent(QCloseEvent* close) {
-	// 	database* db = database::get_instance();
-	// 	ui->accept();
-	// }
-
 public:
-	explicit main_window(QMainWindow* parent = nullptr);
+	explicit main_window(std::string, QMainWindow* parent = nullptr);
 	void create_protocol_chart();
 	void create_ip_chart();
 

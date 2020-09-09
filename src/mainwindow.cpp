@@ -15,8 +15,9 @@
 #include <QtCharts/QLegend>
 #include <QtCharts/QValueAxis>
 
-main_window::main_window(QMainWindow* parent)
+main_window::main_window(std::string curr_p, QMainWindow* parent)
 	: QMainWindow(parent)
+	, curr_path(curr_p)
 	, ui(new Ui::MainWindow)
 	, chart(new Chart)
 	, start(false)
@@ -39,7 +40,13 @@ main_window::main_window(QMainWindow* parent)
 		ui->capture_button, &QPushButton::toggled, this, &main_window::handle_capture_button);
 	QObject::connect(
 		ui->done_button, &QPushButton::pressed, this, &main_window::handle_done_button);
+
+	// setup_python();
+
+	infer_w = new inference_worker(curr_path);
 }
+
+// void main_window::setup_python() { }
 
 void main_window::handle_capture_button() {
 

@@ -19,8 +19,7 @@
 #include <QtCharts/QValueAxis>
 
 ui_reload::ui_reload(Ui::MainWindow* Ui)
-	: timer(new callback_timer())
-	, ui(Ui)
+	: ui(Ui)
 	, no_pkts(0)
 	, total_bytes(0) {
 	QObject::connect(&m_timer, &QTimer::timeout, this, &ui_reload::update);

@@ -41,22 +41,21 @@ std::string get_curr_working_dir() {
 
 int main(int argc, char* argv[]) {
 	QApplication app(argc, argv);
-	main_window main_win;
-	main_win.show();
 
 	// pybind11::scoped_interpreter guard{};
-	// std::vector<basic_packet_info> buffer;
-	// // auto sys = pybind11::module::import("sys");
+	// auto sys = pybind11::module::import("sys");
 
-	// std::string curr_path = get_curr_working_dir();
+	std::string curr_path = get_curr_working_dir();
 	// curr_path = curr_path;
-
-	// // std::cout << curr_path << std::endl;
 
 	// auto sys = pybind11::module::import("sys");
 	// sys.attr("path").attr("append")(curr_path + "/model"); // add python modules to PATH
 	// sys.attr("path").attr("append")(
 	// 	"../venv/lib/python3.8/site-packages"); // add python modules(virtual environment) to PATH
+	main_window main_win(curr_path);
+	main_win.show();
+
+	// std::cout << curr_path << std::endl;
 
 	// auto inference = pybind11::module::import("inference");
 
@@ -71,7 +70,7 @@ int main(int argc, char* argv[]) {
 
 	// std::pair<std::vector<int>, std::vector<int>> res =
 	// 	obj.cast<std::pair<std::vector<int>, std::vector<int>>>();
-	// // for(auto i : res.first) { std::cout << i << "\n"; }
-	// // for(auto i : res.second) { std::cout << i << "\n"; }
+	// for(auto i : res.first) { std::cout << i << "\n"; }
+	// for(auto i : res.second) { std::cout << i << "\n"; }
 	return app.exec();
 }

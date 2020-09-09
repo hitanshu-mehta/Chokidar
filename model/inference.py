@@ -1,6 +1,6 @@
 import pickle
-import pandas as pd
-import numpy as np 
+import pandas
+import numpy
 from fetch_data import read_mongo
 
 
@@ -37,21 +37,24 @@ def load_model_and_infer(BATCH_SIZE = 64,INPUT_SIZE = 78):
     # for s,i in enumerate(NaN_values):
     #   print(i,input_df.columns[s])
 
+    
     dos_detector = pickle.load(open(trained_model_path+'/dos_rf.sav','rb'))
     ddos_detector = pickle.load(open(trained_model_path+'/ddos_rf.sav','rb'))
     portscan_detector = pickle.load(open(trained_model_path+'/portscan_rf.sav','rb'))
-    abnormal_detector = pickle.load(open(trained_model_path + '/ab_rf.sav','rb'))
-
+    # abnormal_detector = pickle.load(open(trained_model_path + '/ab_dt.sav','rb'))
+    print("fgh")
     atk_dst_port = []
     atk_type = []
     
-    if(input_df.size):
+    
+    
+    if(input_df.size > 2000):
       dos_predict = dos_detector.predict(input_df)
       ddos_predict = ddos_detector.predict(input_df)
       portscan_predict = portscan_detector.predict(input_df)
-      abnormal_predict = abnormal_detector.predict(input_df)
+      # abnormal_predict = abnormal_detector.predict(input_df)
     else:
-      return [atk_dst_port,atk_type]
+      return (atk_dst_port,atk_type)
 
     # check for attacks
 
@@ -74,15 +77,18 @@ def load_model_and_infer(BATCH_SIZE = 64,INPUT_SIZE = 78):
       atk_dst_port.append(int(dst_port))
       atk_type.append(2)
 
-    attack_idxs_ab = check_for_attacks(abnormal_predict,'unknown')
-    for idx in attack_idxs_ab:
-      dst_port = input_df.iloc[idx]['Destination Port']
-      atk_dst_port.append(int(dst_port))
-      atk_type.append(3)
+    # attack_idxs_ab = check_for_attacks(abnormal_predict,'unknown')
+    # for idx in attack_idxs_ab:
+    #   dst_port = input_df.iloc[idx]['Destination Port']
+    #   atk_dst_port.append(int(dst_port))
+    #   atk_type.append(3)
 
     # for p,t in zip(atk_dst_port,atk_type):
     #   print(p,t)
     
+    print("Complete inferencing")
+
+    del input_df
     return (atk_dst_port,atk_type)
 
 

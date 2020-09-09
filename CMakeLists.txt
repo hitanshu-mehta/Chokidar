@@ -27,6 +27,7 @@ link_directories(${CMAKE_SOURCE_DIR}/mongo-cxx-driver/lib/)
 
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+# set(ENV{PYTHONPATH} ${CMAKE_SOURCE_DIR}/model/inference.py ${CMAKE_SOURCE_DIR}/model/fetch_data.py) 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui Charts)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(PCAP REQUIRED)
@@ -49,6 +50,7 @@ set(project_source
     ${SRC_PATH}/session_stats.cpp
     ${WORKER_PATH}/packet_capture_worker.cpp
     ${WORKER_PATH}/ui_reload_worker.cpp
+    ${WORKER_PATH}/inference_worker.cpp
     ${SRC_PATH}/Chart.cpp
     )
 
@@ -73,6 +75,7 @@ set(project_headers
     ${WORKER_PATH}/packet_capture_worker.h
     ${WORKER_PATH}/callback_timer.hpp
     ${WORKER_PATH}/ui_reload_worker.hpp
+    ${WORKER_PATH}/inference_worker.hpp
     ${SRC_PATH}/Chart.h
 )
 
