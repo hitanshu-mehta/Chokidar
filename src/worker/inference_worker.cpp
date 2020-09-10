@@ -36,6 +36,6 @@ void inference_worker::infer() {
 		for(auto i : res.second) { std::cout << i << "\n"; }
 		fprintf(stderr, "--------------------------\n");
 
-		sleep_until(system_clock::now() + seconds(18000000));
+		sleep_until(system_clock::now() + seconds(300));
 	}
 }

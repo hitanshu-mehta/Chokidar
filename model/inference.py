@@ -42,7 +42,7 @@ def load_model_and_infer(BATCH_SIZE = 64,INPUT_SIZE = 78):
     ddos_detector = pickle.load(open(trained_model_path+'/ddos_rf.sav','rb'))
     portscan_detector = pickle.load(open(trained_model_path+'/portscan_rf.sav','rb'))
     # abnormal_detector = pickle.load(open(trained_model_path + '/ab_dt.sav','rb'))
-    print("fgh")
+    
     atk_dst_port = []
     atk_type = []
     
