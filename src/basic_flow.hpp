@@ -127,6 +127,9 @@ public:
 	net::port_t get_src_port();
 	net::port_t get_dst_port();
 
+	double get_flow_packets_s();
+	double get_flow_bytes_s();
+
 	double get_down_up_ratio();
 	double get_avg_pkt_size();
 	double get_avg_seg_size();

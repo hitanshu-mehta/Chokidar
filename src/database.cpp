@@ -8,13 +8,13 @@ database::database() {
 	using bsoncxx::builder::basic::kvp;
 	this->inst = new mongocxx::instance();
 	this->c = new mongocxx::client(
-		mongocxx::uri{"mongodb://localhost:27017"}); // default is localhost, port 27017
+		mongocxx::uri{"mongodb://127.0.0.1:27017"}); // default is localhost, port 27017
 	this->db = c->database("idsdb");
 
 	if(!this->db.has_collection("flows")) {
 		auto collection_options = bsoncxx::builder::basic::document{};
 		// max size of capped collection is 10 MB or 5000 documents.
-		collection_options.append(kvp("capped", true), kvp("size", 10000000), kvp("max", 5000));
+		collection_options.append(kvp("capped", true), kvp("size", 100000000), kvp("max", 5000));
 		fprintf(stderr, "Created flows");
 		db.create_collection("flows", collection_options.view());
 	}

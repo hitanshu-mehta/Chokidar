@@ -163,6 +163,21 @@ long basic_flow::get_sflow_bbytes() {
 	return this->backward_bytes / this->sf_count;
 }
 
+double basic_flow::get_flow_packets_s() {
+	double flow_packets_s = 0;
+	long flow_duration = flow_last_seen - flow_start_time;
+	if(flow_duration != 0) flow_packets_s = packet_count() / (flow_duration / 1000000.0);
+	return flow_packets_s;
+}
+
+double basic_flow::get_flow_bytes_s() {
+	long flow_duration = flow_last_seen - flow_start_time;
+	double flow_bytes_s = 0;
+	if(flow_duration != 0)
+		flow_bytes_s = (forward_bytes + backward_bytes) / (flow_duration / 1000000.0);
+	return flow_bytes_s;
+}
+
 void basic_flow::first_packet(basic_packet_info packet) {
 	update_flow_bulk(packet);
 	detect_update_subflows(packet);
@@ -632,13 +647,6 @@ bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
 		bwd_pkt_stats_std = bwd_pkt_stats.get_standard_deviation();
 	}
 
-	double flow_bytes_s = 0;
-	if(flow_duration != 0)
-		flow_bytes_s = (forward_bytes + backward_bytes) / (flow_duration / 1000000.0);
-
-	double flow_packets_s = 0;
-	if(flow_duration != 0) flow_packets_s = packet_count() / (flow_duration / 1000000.0);
-
 	double fwd_iat_sum = 0, fwd_iat_avg = 0, fwd_iat_std = 0, fwd_iat_max = 0, fwd_iat_min = 0;
 	if(this->forward.size() > 1) {
 		fwd_iat_sum = forward_IAT.get_sum();
@@ -706,8 +714,8 @@ bsoncxx::document::value basic_flow::dump_flow_based_features_to_db() {
 		<< "Bwd Packet Length Min" << bwd_pkt_stats_min
 		<< "Bwd Packet Length Mean" << bwd_pkt_stats_avg
 		<< "Bwd Packet Length Std" << bwd_pkt_stats_std
-		<< "Flow Bytes/s" << flow_bytes_s
-		<< "Flow Packets/s"<< flow_packets_s
+		<< "Flow Bytes/s" << get_flow_bytes_s()
+		<< "Flow Packets/s"<< get_flow_packets_s()
 		<<"Flow IAT Mean"<< flow_IAT.get_avg()
 		<<"Flow IAT Std" << flow_IAT.get_standard_deviation()
 		<<"Flow IAT Max"<< flow_IAT.get_max()

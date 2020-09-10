@@ -38,7 +38,9 @@ BSONCXX_INLINE_NAMESPACE_BEGIN
 ///
 enum class type : std::uint8_t {
 #define BSONCXX_ENUM(name, val) k_##name = val,
+#if !defined(Q_MOC_RUN)
 #include <bsoncxx/enums/type.hpp>
+#endif
 #undef BSONCXX_ENUM
 };
 
@@ -56,7 +58,9 @@ enum class type : std::uint8_t {
 ///
 enum class binary_sub_type : std::uint8_t {
 #define BSONCXX_ENUM(name, val) k_##name = val,
+#if !defined(Q_MOC_RUN)
 #include <bsoncxx/enums/binary_sub_type.hpp>
+#endif
 #undef BSONCXX_ENUM
 };
 
@@ -93,9 +97,7 @@ struct BSONCXX_API b_double {
     ///
     /// Conversion operator unwrapping a double
     ///
-    BSONCXX_INLINE operator double() const {
-        return value;
-    }
+    BSONCXX_INLINE operator double() const { return value; }
 };
 
 ///
@@ -103,7 +105,7 @@ struct BSONCXX_API b_double {
 ///
 /// @relatesalso b_double
 ///
-BSONCXX_INLINE bool operator==(const b_double& lhs, const b_double& rhs) {
+BSONCXX_INLINE bool operator==(const b_double &lhs, const b_double &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -120,18 +122,17 @@ struct BSONCXX_API b_utf8 {
     ///   The value to wrap.
     ///
     template <typename T,
-              typename std::enable_if<!std::is_same<b_utf8, typename std::decay<T>::type>::value,
-                                      int>::type = 0>
-    BSONCXX_INLINE explicit b_utf8(T&& t) : value(std::forward<T>(t)) {}
+              typename std::enable_if<
+                  !std::is_same<b_utf8, typename std::decay<T>::type>::value,
+                  int>::type = 0>
+    BSONCXX_INLINE explicit b_utf8(T &&t) : value(std::forward<T>(t)) {}
 
     stdx::string_view value;
 
     ///
     /// Conversion operator unwrapping a string_view
     ///
-    BSONCXX_INLINE operator stdx::string_view() const {
-        return value;
-    }
+    BSONCXX_INLINE operator stdx::string_view() const { return value; }
 };
 
 ///
@@ -139,7 +140,7 @@ struct BSONCXX_API b_utf8 {
 ///
 /// @relatesalso b_utf8
 ///
-BSONCXX_INLINE bool operator==(const b_utf8& lhs, const b_utf8& rhs) {
+BSONCXX_INLINE bool operator==(const b_utf8 &lhs, const b_utf8 &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -154,16 +155,12 @@ struct BSONCXX_API b_document {
     ///
     /// Conversion operator unwrapping a document::view
     ///
-    BSONCXX_INLINE operator document::view() const {
-        return value;
-    }
+    BSONCXX_INLINE operator document::view() const { return value; }
 
     ///
     /// Returns an unwrapped document::view
     ///
-    BSONCXX_INLINE document::view view() {
-        return value;
-    }
+    BSONCXX_INLINE document::view view() { return value; }
 };
 
 ///
@@ -171,7 +168,7 @@ struct BSONCXX_API b_document {
 ///
 /// @relatesalso b_document
 ///
-BSONCXX_INLINE bool operator==(const b_document& lhs, const b_document& rhs) {
+BSONCXX_INLINE bool operator==(const b_document &lhs, const b_document &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -186,9 +183,7 @@ struct BSONCXX_API b_array {
     ///
     /// Conversion operator unwrapping an array::view
     ///
-    BSONCXX_INLINE operator array::view() const {
-        return value;
-    }
+    BSONCXX_INLINE operator array::view() const { return value; }
 };
 
 ///
@@ -196,7 +191,7 @@ struct BSONCXX_API b_array {
 ///
 /// @relatesalso b_array
 ///
-BSONCXX_INLINE bool operator==(const b_array& lhs, const b_array& rhs) {
+BSONCXX_INLINE bool operator==(const b_array &lhs, const b_array &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -208,7 +203,7 @@ struct BSONCXX_API b_binary {
 
     binary_sub_type sub_type;
     uint32_t size;
-    const uint8_t* bytes;
+    const uint8_t *bytes;
 };
 
 ///
@@ -216,7 +211,7 @@ struct BSONCXX_API b_binary {
 ///
 /// @relatesalso b_binary
 ///
-BSONCXX_INLINE bool operator==(const b_binary& lhs, const b_binary& rhs) {
+BSONCXX_INLINE bool operator==(const b_binary &lhs, const b_binary &rhs) {
     return lhs.sub_type == rhs.sub_type && lhs.size == rhs.size &&
            (std::memcmp(lhs.bytes, rhs.bytes, lhs.size) == 0);
 }
@@ -236,7 +231,7 @@ struct BSONCXX_API b_undefined {
 ///
 /// @relatesalso b_undefined
 ///
-BSONCXX_INLINE bool operator==(const b_undefined&, const b_undefined&) {
+BSONCXX_INLINE bool operator==(const b_undefined &, const b_undefined &) {
     return true;
 }
 
@@ -254,7 +249,7 @@ struct BSONCXX_API b_oid {
 ///
 /// @relatesalso b_oid
 ///
-BSONCXX_INLINE bool operator==(const b_oid& lhs, const b_oid& rhs) {
+BSONCXX_INLINE bool operator==(const b_oid &lhs, const b_oid &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -269,9 +264,7 @@ struct BSONCXX_API b_bool {
     ///
     /// Conversion operator unwrapping a bool
     ///
-    BSONCXX_INLINE operator bool() const {
-        return value;
-    }
+    BSONCXX_INLINE operator bool() const { return value; }
 };
 
 ///
@@ -279,7 +272,7 @@ struct BSONCXX_API b_bool {
 ///
 /// @relatesalso b_bool
 ///
-BSONCXX_INLINE bool operator==(const b_bool& lhs, const b_bool& rhs) {
+BSONCXX_INLINE bool operator==(const b_bool &lhs, const b_bool &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -305,31 +298,29 @@ struct BSONCXX_API b_date {
     ///   A system_clock time_point.
     ///
     BSONCXX_INLINE
-    explicit b_date(const std::chrono::system_clock::time_point& tp)
-        : value(std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch())) {}
+    explicit b_date(const std::chrono::system_clock::time_point &tp)
+        : value(std::chrono::duration_cast<std::chrono::milliseconds>(
+              tp.time_since_epoch())) {}
 
     std::chrono::milliseconds value;
 
     ///
     /// Conversion operator unwrapping a int64_t
     ///
-    BSONCXX_INLINE operator int64_t() const {
-        return value.count();
-    }
+    BSONCXX_INLINE operator int64_t() const { return value.count(); }
 
     ///
     /// Manually convert this b_date to an int64_t
     ///
-    BSONCXX_INLINE int64_t to_int64() const {
-        return value.count();
-    }
+    BSONCXX_INLINE int64_t to_int64() const { return value.count(); }
 
     ///
     /// Conversion operator unwrapping a time_point
     ///
     BSONCXX_INLINE operator std::chrono::system_clock::time_point() const {
         return std::chrono::system_clock::time_point(
-            std::chrono::duration_cast<std::chrono::system_clock::duration>(value));
+            std::chrono::duration_cast<std::chrono::system_clock::duration>(
+                value));
     }
 };
 
@@ -338,7 +329,7 @@ struct BSONCXX_API b_date {
 ///
 /// @relatesalso b_date
 ///
-BSONCXX_INLINE bool operator==(const b_date& lhs, const b_date& rhs) {
+BSONCXX_INLINE bool operator==(const b_date &lhs, const b_date &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -354,9 +345,7 @@ struct BSONCXX_API b_null {
 ///
 /// @relatesalso b_null
 ///
-BSONCXX_INLINE bool operator==(const b_null&, const b_null&) {
-    return true;
-}
+BSONCXX_INLINE bool operator==(const b_null &, const b_null &) { return true; }
 
 ///
 /// A BSON regex value.
@@ -373,11 +362,11 @@ struct BSONCXX_API b_regex {
     /// @param options
     ///   The regex options
     ///
-    template <typename T,
-              typename U = stdx::string_view,
-              typename std::enable_if<!std::is_same<b_regex, typename std::decay<T>::type>::value,
-                                      int>::type = 0>
-    BSONCXX_INLINE explicit b_regex(T&& regex, U&& options = U{})
+    template <typename T, typename U = stdx::string_view,
+              typename std::enable_if<
+                  !std::is_same<b_regex, typename std::decay<T>::type>::value,
+                  int>::type = 0>
+    BSONCXX_INLINE explicit b_regex(T &&regex, U &&options = U{})
         : regex(std::forward<T>(regex)), options(std::forward<U>(options)) {}
 
     stdx::string_view regex;
@@ -389,7 +378,7 @@ struct BSONCXX_API b_regex {
 ///
 /// @relatesalso b_regex
 ///
-BSONCXX_INLINE bool operator==(const b_regex& lhs, const b_regex& rhs) {
+BSONCXX_INLINE bool operator==(const b_regex &lhs, const b_regex &rhs) {
     return lhs.regex == rhs.regex && lhs.options == rhs.options;
 }
 
@@ -411,7 +400,7 @@ struct BSONCXX_API b_dbpointer {
 ///
 /// @relatesalso b_dbpointer
 ///
-BSONCXX_INLINE bool operator==(const b_dbpointer& lhs, const b_dbpointer& rhs) {
+BSONCXX_INLINE bool operator==(const b_dbpointer &lhs, const b_dbpointer &rhs) {
     return lhs.collection == rhs.collection && lhs.value == rhs.value;
 }
 
@@ -428,18 +417,17 @@ struct BSONCXX_API b_code {
     ///   The js code
     ///
     template <typename T,
-              typename std::enable_if<!std::is_same<b_code, typename std::decay<T>::type>::value,
-                                      int>::type = 0>
-    BSONCXX_INLINE explicit b_code(T&& t) : code(std::forward<T>(t)) {}
+              typename std::enable_if<
+                  !std::is_same<b_code, typename std::decay<T>::type>::value,
+                  int>::type = 0>
+    BSONCXX_INLINE explicit b_code(T &&t) : code(std::forward<T>(t)) {}
 
     stdx::string_view code;
 
     ///
     /// Conversion operator unwrapping a string_view
     ///
-    BSONCXX_INLINE operator stdx::string_view() const {
-        return code;
-    }
+    BSONCXX_INLINE operator stdx::string_view() const { return code; }
 };
 
 ///
@@ -447,7 +435,7 @@ struct BSONCXX_API b_code {
 ///
 /// @relatesalso b_code
 ///
-BSONCXX_INLINE bool operator==(const b_code& lhs, const b_code& rhs) {
+BSONCXX_INLINE bool operator==(const b_code &lhs, const b_code &rhs) {
     return lhs.code == rhs.code;
 }
 
@@ -467,18 +455,17 @@ struct BSONCXX_API b_symbol {
     ///   The symbol.
     ///
     template <typename T,
-              typename std::enable_if<!std::is_same<b_symbol, typename std::decay<T>::type>::value,
-                                      int>::type = 0>
-    BSONCXX_INLINE explicit b_symbol(T&& t) : symbol(std::forward<T>(t)) {}
+              typename std::enable_if<
+                  !std::is_same<b_symbol, typename std::decay<T>::type>::value,
+                  int>::type = 0>
+    BSONCXX_INLINE explicit b_symbol(T &&t) : symbol(std::forward<T>(t)) {}
 
     stdx::string_view symbol;
 
     ///
     /// Conversion operator unwrapping a string_view
     ///
-    BSONCXX_INLINE operator stdx::string_view() const {
-        return symbol;
-    }
+    BSONCXX_INLINE operator stdx::string_view() const { return symbol; }
 };
 
 ///
@@ -486,7 +473,7 @@ struct BSONCXX_API b_symbol {
 ///
 /// @relatesalso b_symbol
 ///
-BSONCXX_INLINE bool operator==(const b_symbol& lhs, const b_symbol& rhs) {
+BSONCXX_INLINE bool operator==(const b_symbol &lhs, const b_symbol &rhs) {
     return lhs.symbol == rhs.symbol;
 }
 
@@ -506,11 +493,11 @@ struct BSONCXX_API b_codewscope {
     ///   A bson document view holding the scope environment.
     ///
     template <
-        typename T,
-        typename U,
-        typename std::enable_if<!std::is_same<b_codewscope, typename std::decay<T>::type>::value,
-                                int>::type = 0>
-    BSONCXX_INLINE explicit b_codewscope(T&& code, U&& scope)
+        typename T, typename U,
+        typename std::enable_if<
+            !std::is_same<b_codewscope, typename std::decay<T>::type>::value,
+            int>::type = 0>
+    BSONCXX_INLINE explicit b_codewscope(T &&code, U &&scope)
         : code(std::forward<T>(code)), scope(std::forward<U>(scope)) {}
 
     stdx::string_view code;
@@ -522,7 +509,8 @@ struct BSONCXX_API b_codewscope {
 ///
 /// @relatesalso b_codewscope
 ///
-BSONCXX_INLINE bool operator==(const b_codewscope& lhs, const b_codewscope& rhs) {
+BSONCXX_INLINE bool operator==(const b_codewscope &lhs,
+                               const b_codewscope &rhs) {
     return lhs.code == rhs.code && lhs.scope == rhs.scope;
 }
 
@@ -537,9 +525,7 @@ struct BSONCXX_API b_int32 {
     ///
     /// Conversion operator unwrapping a int32_t
     ///
-    BSONCXX_INLINE operator int32_t() const {
-        return value;
-    }
+    BSONCXX_INLINE operator int32_t() const { return value; }
 };
 
 ///
@@ -547,7 +533,7 @@ struct BSONCXX_API b_int32 {
 ///
 /// @relatesalso b_int32
 ///
-BSONCXX_INLINE bool operator==(const b_int32& lhs, const b_int32& rhs) {
+BSONCXX_INLINE bool operator==(const b_int32 &lhs, const b_int32 &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -570,7 +556,7 @@ struct BSONCXX_API b_timestamp {
 ///
 /// @relatesalso b_timestamp
 ///
-BSONCXX_INLINE bool operator==(const b_timestamp& lhs, const b_timestamp& rhs) {
+BSONCXX_INLINE bool operator==(const b_timestamp &lhs, const b_timestamp &rhs) {
     return lhs.increment == rhs.increment && lhs.timestamp == rhs.timestamp;
 }
 
@@ -585,9 +571,7 @@ struct BSONCXX_API b_int64 {
     ///
     /// Conversion operator unwrapping a int64_t
     ///
-    BSONCXX_INLINE operator int64_t() const {
-        return value;
-    }
+    BSONCXX_INLINE operator int64_t() const { return value; }
 };
 
 ///
@@ -595,7 +579,7 @@ struct BSONCXX_API b_int64 {
 ///
 /// @relatesalso b_int64
 ///
-BSONCXX_INLINE bool operator==(const b_int64& lhs, const b_int64& rhs) {
+BSONCXX_INLINE bool operator==(const b_int64 &lhs, const b_int64 &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -615,9 +599,10 @@ struct BSONCXX_API b_decimal128 {
     ///
     template <
         typename T,
-        typename std::enable_if<!std::is_same<b_decimal128, typename std::decay<T>::type>::value,
-                                int>::type = 0>
-    BSONCXX_INLINE explicit b_decimal128(T&& t) : value(std::forward<T>(t)) {}
+        typename std::enable_if<
+            !std::is_same<b_decimal128, typename std::decay<T>::type>::value,
+            int>::type = 0>
+    BSONCXX_INLINE explicit b_decimal128(T &&t) : value(std::forward<T>(t)) {}
 };
 
 ///
@@ -625,7 +610,8 @@ struct BSONCXX_API b_decimal128 {
 ///
 /// @relatesalso b_decimal128
 ///
-BSONCXX_INLINE bool operator==(const b_decimal128& lhs, const b_decimal128& rhs) {
+BSONCXX_INLINE bool operator==(const b_decimal128 &lhs,
+                               const b_decimal128 &rhs) {
     return lhs.value == rhs.value;
 }
 
@@ -641,7 +627,7 @@ struct BSONCXX_API b_minkey {
 ///
 /// @relatesalso b_minkey
 ///
-BSONCXX_INLINE bool operator==(const b_minkey&, const b_minkey&) {
+BSONCXX_INLINE bool operator==(const b_minkey &, const b_minkey &) {
     return true;
 }
 
@@ -657,19 +643,19 @@ struct BSONCXX_API b_maxkey {
 ///
 /// @relatesalso b_maxkey
 ///
-BSONCXX_INLINE bool operator==(const b_maxkey&, const b_maxkey&) {
+BSONCXX_INLINE bool operator==(const b_maxkey &, const b_maxkey &) {
     return true;
 }
 
 #define BSONCXX_ENUM(name, val)                                                \
-    BSONCXX_INLINE bool operator!=(const b_##name& lhs, const b_##name& rhs) { \
+    BSONCXX_INLINE bool operator!=(const b_##name &lhs, const b_##name &rhs) { \
         return !(lhs == rhs);                                                  \
     }
 #include <bsoncxx/enums/type.hpp>
 #undef BSONCXX_ENUM
 
-}  // namespace types
+} // namespace types
 BSONCXX_INLINE_NAMESPACE_END
-}  // namespace bsoncxx
+} // namespace bsoncxx
 
 #include <bsoncxx/config/postlude.hpp>

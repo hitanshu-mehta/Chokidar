@@ -46,6 +46,7 @@ public:
 	bool valid_handle() { return handle != NULL; }
 
 	int compile_filter_expression();
+	int compile_filter_expression(char*);
 	int apply_filter();
 
 	static void got_packet(u_char*, const struct pcap_pkthdr*, const u_char*);

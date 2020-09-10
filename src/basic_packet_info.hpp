@@ -18,7 +18,7 @@ private:
 	net::port_t src_port;
 	net::port_t dst_port;
 	int protocol;
-	long timestamp; // not set
+	long timestamp;
 	long payload_bytes = 0;
 	std::string flowid = "";
 	int all_flags = 0;
@@ -32,7 +32,7 @@ private:
 	bool flagCWR = false;
 	bool flagRST = false;
 	int tcp_window = 0;
-	long header_bytes = 0; // not set
+	long header_bytes = 0;
 	int payload_packet = 0;
 
 public:

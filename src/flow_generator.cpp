@@ -67,8 +67,8 @@ void flow_generator::add_packet(basic_packet_info packet) {
 	}
 	else {
 		/* add new flow */
-		current_flows[packet.get_fwd_flow_id()] =
-			basic_flow(this->bidirectional, packet, this->flow_activity_timeout);
+		flow = basic_flow(this->bidirectional, packet, this->flow_activity_timeout);
+		current_flows[packet.get_fwd_flow_id()] = flow;
 	}
 }
 
@@ -90,15 +90,19 @@ int flow_generator::dump_labeled_current_flow_to_file(std::string output_path) {
 	}
 	return total;
 }
+
 int flow_generator::dump_labeled_current_flow_to_db(database* const db) {
 	int total = 0;
+
 	for(auto flow : current_flows) {
+
 		if(flow.second.packet_count() > 1) {
-			printf("Insering\n");
+			printf("Insering flow\n");
 			db->get_db()->collection("flows").insert_one(
 				flow.second.dump_flow_based_features_to_db());
 			++total;
 		}
 	}
+	current_flows.clear();
 	return total;
 }

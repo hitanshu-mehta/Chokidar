@@ -8,23 +8,11 @@
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/basic/kvp.hpp>
 
-// stream
-#include <bsoncxx/builder/stream/document.hpp>
-
 #include <bsoncxx/document/value.hpp>
-#include <bsoncxx/json.hpp>
 
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
-#include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
-
-using bsoncxx::builder::stream::close_array;
-using bsoncxx::builder::stream::close_document;
-using bsoncxx::builder::stream::document;
-using bsoncxx::builder::stream::finalize;
-using bsoncxx::builder::stream::open_array;
-using bsoncxx::builder::stream::open_document;
 
 /* 
 	Singleton class.

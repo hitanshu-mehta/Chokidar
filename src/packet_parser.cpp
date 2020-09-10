@@ -1,10 +1,15 @@
 #include "packet_parser.hpp"
+#include "session_stats.hpp"
 
 #include <arpa/inet.h>
 #include <bitset>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
+
+#define ETHERTYPE_IP 0x0800
+#define ETHERTYPE_IPv6 0x8100
+#define ETHERTYPE_ARP 0x0806
 
 packet_parser::packet_parser(const struct pcap_pkthdr* headr, const uint8_t* pkt, uint8_t* args)
 	: header(headr)
@@ -74,47 +79,93 @@ bool packet_parser::handle_udp(basic_packet_info* pkt) {
 	return true;
 }
 
+void packet_parser::update_stats(bool captured, basic_packet_info* pkt) {
+	session_stats* stats = session_stats::get_instance();
+
+	fprintf(stderr, "\t%d\n", ether->ether_type);
+	switch(ether->ether_type) {
+	case ETHERTYPE_ARP:
+		stats->add_to_arp_count(1);
+		break;
+	case ETHERTYPE_IPv6:
+		stats->add_to_ipv6_count(1);
+		break;
+	case ETHERTYPE_IP:
+		// stats->add_to_ip_count(1);
+		break;
+	}
+
+	if(captured) {
+		std::string str(inet_ntoa(ip->ip_src));
+		stats->add_uni_ip(str, 1);
+		stats->add_to_ip_count(1);
+		stats->add_no_pkts_captured(1);
+		switch(ip->ip_p) {
+		case IPPROTO_TCP:
+			stats->add_to_tcp_count(1);
+			break;
+		case IPPROTO_UDP:
+			stats->add_to_udp_count(1);
+			break;
+		case IPPROTO_ICMP:
+			stats->add_to_icmp_count(1);
+			break;
+		case IPPROTO_DCCP:
+			stats->add_to_dccp_count(1);
+		default:
+			break;
+		}
+	}
+	else
+		stats->add_no_pkts_discarded(1);
+	stats->add_to_total_bytes(pkt->get_payload_bytes());
+	int protocol = pkt->get_protocol();
+}
+
 bool packet_parser::parse() {
 	set_ether();
 
-	if(!set_ip()) {
-		fprintf(stderr, "invalid ip\n");
-		return false;
-	}
 	basic_packet_info pkt;
-	pkt.set_src(ip->ip_src);
-	pkt.set_dst(ip->ip_dst);
-	pkt.set_protocol(ip->ip_p);
-	pkt.set_timestamp(header->ts.tv_usec);
 	bool captured = true;
-	switch(ip->ip_p) {
-	case IPPROTO_TCP:
-		// printf("   Protocol: TCP\n");
-		captured = handle_tcp(&pkt);
-		pkt.set_payload_bytes(ntohs(ip->ip_len) - (size_ip + size_tcp));
-		pkt.set_header_bytes(size_tcp);
-		break;
-	case IPPROTO_UDP:
-		// printf("   Protocol: UDP\n");
-		captured = handle_udp(&pkt);
-		pkt.set_header_bytes(8); // fix header of 8 bytes
 
-		// len contains size (in bytes) of udp pkt (header + data)
-		pkt.set_payload_bytes(udp->len - 8);
-		break;
-	// case IPPROTO_ICMP:
-	// 	printf("   Protocol: ICMP\n");
-	// 	return;
-	// case IPPROTO_IP:
-	// 	printf("   Protocol: IP\n");
-	// 	return;
-	default:
-		return captured = false;
+	if(set_ip()) {
+
+		pkt.set_src(ip->ip_src);
+		pkt.set_dst(ip->ip_dst);
+		pkt.set_protocol(ip->ip_p);
+		pkt.set_timestamp(header->ts.tv_usec);
+		switch(ip->ip_p) {
+		case IPPROTO_TCP:
+			// printf("   Protocol: TCP\n");
+			captured = handle_tcp(&pkt);
+			pkt.set_payload_bytes(ntohs(ip->ip_len) - (size_ip + size_tcp));
+			pkt.set_header_bytes(size_tcp);
+			break;
+		case IPPROTO_UDP:
+			// printf("   Protocol: UDP\n");
+			captured = handle_udp(&pkt);
+			pkt.set_header_bytes(8); // fix header of 8 bytes
+
+			// len contains size (in bytes) of udp pkt (header + data)
+			pkt.set_payload_bytes(udp->len - 8);
+			break;
+		// case IPPROTO_ICMP:
+		// 	printf("   Protocol: ICMP\n");
+		// 	return;
+		// case IPPROTO_IP:
+		// 	printf("   Protocol: IP\n");
+		// 	return;
+		default:
+			captured = false;
+		}
+
+		if(captured) {
+			pkt.set_id();
+			basic_pkts.push_back(pkt);
+		}
 	}
-	if(captured) {
-		pkt.set_id();
-		basic_pkts.push_back(pkt);
-	}
+
+	update_stats(captured, &pkt);
 
 	return captured;
 }
