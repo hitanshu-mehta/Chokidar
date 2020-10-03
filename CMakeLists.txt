@@ -15,14 +15,14 @@ set(CPACK_PACKAGE_VERSION_MINOR "${IDS_VERSION_MINOR}")
 # Find includes in the build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR})
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/mongo-cxx-driver)
 set(SRC_PATH ${CMAKE_SOURCE_DIR}/src)
 set(UI_PATH ${SRC_PATH}/ui)
 set(WORKER_PATH ${SRC_PATH}/worker)
 set(GRAPH_PATH ${SRC_PATH}/graph)
-
+set(MODEL_PATH ${CMAKE_SOURCE_DIR}/model)
 
 add_subdirectory(pybind11)
 include_directories(${CMAKE_SOURCE_DIR}/mongo-cxx-driver/include/mongocxx/v_noabi/)
@@ -90,6 +90,9 @@ set(project_ui ${UI_PATH}/mainwindow.ui)
 
 qt5_wrap_ui(project_headers_wrapped ${project_ui})
 qt5_wrap_cpp(project_source_mac ${project_headers_mac})
+
+make_directory(${EXECUTABLE_OUTPUT_PATH}/model)
+file(COPY ${MODEL_PATH} DESTINATION ${CMAKE_BINARY_DIR})
 
 add_executable(${PROJECT_NAME} ${project_source} ${project_headers} ${project_headers_wrapped} ${project_source_mac})
 

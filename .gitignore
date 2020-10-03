@@ -4,7 +4,6 @@
 !.*
 *.csv*
 .vscode/*
-*.ui
 docs/*
 venv/*
 dataset/*
