@@ -10,3 +10,29 @@ detects unknown attacks. It also have minimal GUI displaying necessary informati
 to the user.
 
 ![](ui.png)
+
+## Build
+### Pre-requisites
+* qt5 - [Installation guide](https://doc.qt.io/qt-5/gettingstarted.html#installing-qt)
+* cmake - [Installation guide](https://cmake.org/install/)
+* mongodb - [Download page](https://www.mongodb.com/download-center/community)
+### Linux
+```
+git clone https://github.com/hitanshu-mehta/Intrusion-Detection-using-machine-learning-techniques.git
+cd Intrusion-Detection-using-machine-learning-techniques
+python3 -m build.py
+```
+New folder named build will be created in the parent directory.
+```
+build
+├── bin
+├── CMakeFiles
+└── src
+```
+Executable file named IDS will be in the bin directory. Open terminal and run executable.
+```
+sudo ./IDS
+```
+Note that model folder should be in the same directory while running the executable. 
+
+we need to run executable as root in order to capture traffic in [promiscuous mode](https://www.tcpdump.org/manpages/pcap.3pcap.html).
