@@ -21,7 +21,7 @@
 #include <bsoncxx/document/value.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 #include <bsoncxx/stdx/string_view.hpp>
-#include <bsoncxx/types/bson_value/view.hpp>
+#include <bsoncxx/types/value.hpp>
 #include <bsoncxx/view_or_value.hpp>
 #include <mongocxx/client_session.hpp>
 #include <mongocxx/collection.hpp>
@@ -147,7 +147,7 @@ class MONGOCXX_API uploader {
     //   Optional metadata field of the files collection document.
     //
     MONGOCXX_PRIVATE uploader(const client_session* session,
-                              bsoncxx::types::bson_value::view id,
+                              bsoncxx::types::value id,
                               stdx::string_view filename,
                               collection files,
                               collection chunks,

@@ -127,28 +127,6 @@ class MONGOCXX_API index {
     const stdx::optional<bool>& unique() const;
 
     ///
-    /// Whether or not the index is hidden from the query planner. A hidden index is not evaluated
-    /// as part of query plan selection.
-    ///
-    /// @param hidden
-    ///   Whether or not to create a hidden index.
-    ///
-    /// @return
-    ///   A reference to the object on which this member function is being called.  This facilitates
-    ///   method chaining.
-    ///
-    /// @see https://docs.mongodb.com/master/core/index-hidden/
-    ///
-    index& hidden(bool hidden);
-
-    ///
-    /// The current hidden setting.
-    ///
-    /// @return The current hidden.
-    ///
-    const stdx::optional<bool>& hidden() const;
-
-    ///
     /// The name of the index.
     ///
     /// @param name
@@ -443,26 +421,18 @@ class MONGOCXX_API index {
     /// @param haystack_bucket_size
     ///   The geoHaystack bucket size.
     ///
-    /// @deprecated
-    ///   This option is deprecated.
-    ///
     /// @return
     ///   A reference to the object on which this member function is being called.  This facilitates
     ///   method chaining.
     ///
-    MONGOCXX_DEPRECATED index& haystack_bucket_size(double haystack_bucket_size);
-    index& haystack_bucket_size_deprecated(double haystack_bucket_size);
+    index& haystack_bucket_size(double haystack_bucket_size);
 
     ///
     /// The current haystack_bucket_size setting.
     ///
     /// @return The current haystack_bucket_size.
     ///
-    /// @deprecated
-    ///   This method is deprecated.
-    ///
-    MONGOCXX_DEPRECATED const stdx::optional<double>& haystack_bucket_size() const;
-    const stdx::optional<double>& haystack_bucket_size_deprecated() const;
+    const stdx::optional<double>& haystack_bucket_size() const;
 
     ///
     /// Conversion operator that provides a view of the options in document form.
@@ -478,7 +448,6 @@ class MONGOCXX_API index {
 
     stdx::optional<bool> _background;
     stdx::optional<bool> _unique;
-    stdx::optional<bool> _hidden;
     stdx::optional<bsoncxx::string::view_or_value> _name;
     stdx::optional<bsoncxx::document::view> _collation;
     stdx::optional<bool> _sparse;

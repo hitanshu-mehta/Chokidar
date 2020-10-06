@@ -47,7 +47,7 @@ void const basic_packet_info::print_all_info() {
 	fprintf(stderr, "Timestamp: %ld\n", timestamp);
 	fprintf(stderr, "TCP window: %d\n", tcp_window);
 	fprintf(stderr, "header bytes: %ld\n", header_bytes);
-	fprintf(stderr, "payload bytes bytes: %d\n", payload_bytes);
+	fprintf(stderr, "payload bytes bytes: %ld\n", payload_bytes);
 	fprintf(stderr, "|--------------------------------------------|\n");
 	// fprintf(stderr, "Flags %d\n", all_flags);
 }

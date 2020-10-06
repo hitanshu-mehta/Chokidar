@@ -1,0 +1,11 @@
+[requires]
+libpcap/1.9.1
+pybind11/2.5.0
+boost/1.74.0
+mongo-c-driver/1.16.1@bincrafters/stable
+libbson/1.16.2@theirix/stable  
+
+[generators]
+cmake
+
+

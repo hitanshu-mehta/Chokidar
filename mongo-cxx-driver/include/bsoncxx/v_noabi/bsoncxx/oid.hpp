@@ -37,8 +37,6 @@ BSONCXX_INLINE_NAMESPACE_BEGIN
 ///
 class BSONCXX_API oid {
    public:
-    static constexpr std::size_t k_oid_length = 12;
-
     ///
     /// Constructs an oid and initializes it to a newly generated ObjectId.
     ///
@@ -50,9 +48,9 @@ class BSONCXX_API oid {
     /// @param bytes
     ///   A pointer a buffer containing a valid ObjectId.
     /// @param len
-    ///   The length of the buffer. Should be equal to oid::size().
+    ///   The length of the buffer. Should be 12.
     ///
-    /// @throws bsoncxx::exception if the length is not equal to oid::size().
+    /// @throws bsoncxx::exception if the length is not 12.
     ///
     explicit oid(const char* bytes, std::size_t len);
 
@@ -73,15 +71,6 @@ class BSONCXX_API oid {
     /// @return A hexadecimal string representation of this ObjectId.
     ///
     std::string to_string() const;
-
-    ///
-    /// Returns the number of bytes in this ObjectId.
-    ///
-    /// @return The length of this oid's buffer.
-    ///
-    static std::size_t size() {
-        return k_oid_length;
-    }
 
     ///
     /// @{
@@ -117,7 +106,7 @@ class BSONCXX_API oid {
    private:
     friend BSONCXX_PRIVATE int oid_compare(const oid& lhs, const oid& rhs);
 
-    std::array<char, k_oid_length> _bytes;
+    std::array<char, 12> _bytes;
 };
 
 BSONCXX_INLINE_NAMESPACE_END

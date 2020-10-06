@@ -13,8 +13,7 @@
 // limitations under the License.
 
 #ifndef BSONCXX_ENUM
-#error                                                                         \
-    "This header is only meant to be included as an X-macro over BSONCXX_ENUM"
+#error "This header is only meant to be included as an X-macro over BSONCXX_ENUM"
 #endif
 
 BSONCXX_ENUM(double, 0x01)

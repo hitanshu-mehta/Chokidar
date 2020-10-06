@@ -15,7 +15,7 @@
 #pragma once
 
 #include <bsoncxx/array/value.hpp>
-#include <bsoncxx/types/bson_value/view.hpp>
+#include <bsoncxx/types/value.hpp>
 
 #include <mongocxx/config/prelude.hpp>
 
@@ -27,14 +27,14 @@ namespace gridfs {
 /// Class representing the result of a GridFS upload operation.
 class MONGOCXX_API upload {
    public:
-    upload(bsoncxx::types::bson_value::view id);
+    upload(bsoncxx::types::value id);
 
     ///
     /// Gets the id of the uploaded GridFS file.
     ///
     /// @return The id of the uploaded file.
     ///
-    const bsoncxx::types::bson_value::view& id() const;
+    const bsoncxx::types::value& id() const;
 
    private:
     // Array with a single element, containing the value of the _id field for the inserted files
@@ -42,7 +42,7 @@ class MONGOCXX_API upload {
     bsoncxx::array::value _id_owned;
 
     // Points into _id_owned.
-    bsoncxx::types::bson_value::view _id;
+    bsoncxx::types::value _id;
 
     friend MONGOCXX_API bool MONGOCXX_CALL operator==(const upload&, const upload&);
     friend MONGOCXX_API bool MONGOCXX_CALL operator!=(const upload&, const upload&);

@@ -23,8 +23,8 @@ void inference_worker::infer() {
 	pybind11::scoped_interpreter guard{};
 	auto sys = pybind11::module::import("sys");
 	sys.attr("path").attr("append")(curr_path + "/model"); // add python modules to PATH
-	sys.attr("path").attr("append")(
-		"../venv/lib/python3.8/site-packages"); // add python modules(virtual environment) to PATH
+	//sys.attr("path").attr("append")(
+	//	"../venv/lib/python3.8/site-packages"); // add python modules(virtual environment) to PATH
 	auto inference = pybind11::module::import("inference");
 	while(1) {
 		pybind11::object obj = inference.attr("load_model_and_infer")();

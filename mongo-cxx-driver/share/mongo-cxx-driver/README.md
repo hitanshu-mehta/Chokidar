@@ -1,6 +1,4 @@
-# MongoDB C++ Driver 
-[![Evergreen Build Status](https://evergreen.mongodb.com/static/img/favicon.ico)](https://evergreen.mongodb.com/waterfall/cxx-driver)[![Travis Build Status](https://travis-ci.org/mongodb/mongo-cxx-driver.svg?branch=master)](https://travis-ci.org/mongodb/mongo-cxx-driver)
-[![codecov](https://codecov.io/gh/mongodb/mongo-cxx-driver/branch/master/graph/badge.svg)](https://codecov.io/gh/mongodb/mongo-cxx-driver)
+# MongoDB C++ Driver [![Evergreen Build Status](https://evergreen.mongodb.com/static/img/favicon.ico)](https://evergreen.mongodb.com/waterfall/cxx-driver)[![Travis Build Status](https://travis-ci.org/mongodb/mongo-cxx-driver.svg?branch=master)](https://travis-ci.org/mongodb/mongo-cxx-driver)
 
 Welcome to the MongoDB C++ Driver!
 
@@ -31,7 +29,6 @@ Currently, no drivers guarantee API or ABI stability.
 | Family/version       | Stability   | Development         | Purpose                             |
 | -------------------- | ----------- | ------------------- | ----------------------------------- |
 | (repo master branch) | Unstable    | Active development  | New feature development             |
-| mongocxx 3.6.x       | Unstable    | Bug fixes only      | Upcoming stable C++ driver release  |
 | mongocxx 3.5.x       | Stable      | Bug fixes only      | Current stable C++ driver release   |
 | mongocxx 3.4.x       | Stable      | None                | Previous stable C++ driver release  |
 | mongocxx 3.3.x       | Stable      | None                | Previous stable C++ driver release  |
@@ -41,7 +38,18 @@ Currently, no drivers guarantee API or ABI stability.
 
 ## MongoDB compatibility
 
-Compatibility of each C++ driver version with each MongoDB server is documented in the [MongoDB manual](https://docs.mongodb.com/drivers/cxx#mongodb-compatibility).
+The following compatibility table specifies the driver version(s)
+recommended for different versions of MongoDB.  The mongocxx series
+is recommended for all new development.
+
+| Family/version | MongoDB 3.0 | MongoDB 3.2 | MongoDB 3.4 | MongoDB 3.6 | MongoDB 4.0 | MongoDB 4.2 | MongoDB 4.4 |
+| -------------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| mongocxx 3.5.x | ✓           | ✓           | ✓           | ✓           | ✓           | Partial     |             |
+| mongocxx 3.4.x | ✓           | ✓           | ✓           | ✓           | ✓           |             |             |
+| mongocxx 3.3.x | ✓           | ✓           | ✓           | ✓           |             |             |             |
+| mongocxx 3.2.x | ✓           | ✓           | ✓           | Partial     |             |             |             |
+| mongocxx 3.1.x | ✓           | ✓           | ✓           |             |             |             |             |
+| mongocxx 3.0.x | ✓           | ✓           |             |             |             |             |             |
 
 ## Bugs and issues
 

@@ -16,7 +16,7 @@
 
 #include <bsoncxx/array/value.hpp>
 #include <bsoncxx/types.hpp>
-#include <bsoncxx/types/bson_value/view.hpp>
+#include <bsoncxx/types/value.hpp>
 #include <mongocxx/result/bulk_write.hpp>
 
 #include <mongocxx/config/prelude.hpp>
@@ -29,7 +29,7 @@ namespace result {
 class MONGOCXX_API insert_one {
    public:
     // This constructor is public for testing purposes only
-    insert_one(result::bulk_write result, bsoncxx::types::bson_value::view inserted_id);
+    insert_one(result::bulk_write result, bsoncxx::types::value inserted_id);
 
     ///
     /// Returns the bulk write result for this insert operation.
@@ -43,7 +43,7 @@ class MONGOCXX_API insert_one {
     ///
     /// @return The value of the _id field for the inserted document.
     ///
-    const bsoncxx::types::bson_value::view& inserted_id() const;
+    const bsoncxx::types::value& inserted_id() const;
 
    private:
     result::bulk_write _result;
@@ -52,7 +52,7 @@ class MONGOCXX_API insert_one {
     bsoncxx::array::value _inserted_id_owned;
 
     // Points into _inserted_id_owned.
-    bsoncxx::types::bson_value::view _inserted_id;
+    bsoncxx::types::value _inserted_id;
 
     friend MONGOCXX_API bool MONGOCXX_CALL operator==(const insert_one&, const insert_one&);
     friend MONGOCXX_API bool MONGOCXX_CALL operator!=(const insert_one&, const insert_one&);
