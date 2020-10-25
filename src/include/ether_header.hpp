@@ -1,7 +1,7 @@
 #ifndef ETHER_HEADER_HPP
 #define ETHER_HEADER_HPP
 
-#include "constants.hpp"
+#include "src/include/constants.hpp"
 #include <cstdint>
 
 /* Ethernet header */

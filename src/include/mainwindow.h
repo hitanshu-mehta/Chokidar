@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "basic_packet_info.hpp"
+#include "src/include/basic_packet_info.hpp"
 
 #include <QCloseEvent>
 #include <QMainWindow>
@@ -9,9 +9,9 @@
 
 #include "database.hpp"
 
-#include "worker/inference_worker.hpp"
-#include "worker/packet_capture_worker.h"
-#include "worker/ui_reload_worker.hpp"
+#include "inference_worker.hpp"
+#include "packet_capture_worker.h"
+#include "ui_reload_worker.hpp"
 
 #include <QtCharts/QChart>
 

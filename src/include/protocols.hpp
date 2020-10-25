@@ -1,8 +1,8 @@
 #ifndef PROTOCOLS_HPP
 #define PROTOCOLS_HPP
 
-#include "ether_header.hpp"
-#include "ip_header.hpp"
+#include "src/include/ether_header.hpp"
+#include "src/include/ip_header.hpp"
 #include "tcp_header.hpp"
 #include "udp_header.hpp"
 

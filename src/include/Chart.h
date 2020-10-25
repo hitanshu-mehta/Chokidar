@@ -12,7 +12,7 @@ QT_CHARTS_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
 
-#include "session_stats.hpp"
+#include "src/include/session_stats.hpp"
 
 #include <QtCharts/QDateTimeAxis>
 #include <QtCharts/QValueAxis>

@@ -1,6 +1,6 @@
-#include "ui_reload_worker.hpp"
-#include "../database.hpp"
-#include "../graph/bar_chart.hpp"
+#include "src/include/ui_reload_worker.hpp"
+#include "src/include/bar_chart.hpp"
+#include "src/include/database.hpp"
 
 #include <bsoncxx/builder/basic/document.hpp>
 

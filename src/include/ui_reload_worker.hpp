@@ -1,7 +1,7 @@
 #ifndef UI_RELOAD_WORKER_HPP
 #define UI_RELOAD_WORKER_HPP
 
-#include "../session_stats.hpp"
+#include "src/include/session_stats.hpp"
 #include "ui_mainwindow.h"
 #include <QtCore/QTimer>
 

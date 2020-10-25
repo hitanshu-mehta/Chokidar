@@ -20,6 +20,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(LIBRARY_OUTPUT_PATH  ${EXECUTABLE_OUTPUT_PATH}/lib)
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/mongo-cxx-driver)
 set(SRC_PATH ${CMAKE_SOURCE_DIR}/src)
+set(SRC_HEADER_PATH ${CMAKE_SOURCE_DIR}/src/include)
 set(UI_PATH ${SRC_PATH}/ui)
 set(WORKER_PATH ${SRC_PATH}/worker)
 set(GRAPH_PATH ${SRC_PATH}/graph)
@@ -72,31 +73,31 @@ set(project_source
     )
 
 set(project_headers
-    ${SRC_PATH}/packet_capture.hpp
-    ${SRC_PATH}/packet_capture_engine.hpp
-    ${SRC_PATH}/packet_parser.hpp
-    ${SRC_PATH}/basic_flow.hpp
-    ${SRC_PATH}/basic_packet_info.hpp
-    ${SRC_PATH}/flow_features.hpp
-    ${SRC_PATH}/flow_generator.hpp
-    ${SRC_PATH}/flow_generator_engine.hpp
-    ${SRC_PATH}/constants.hpp
-    ${SRC_PATH}/ether_header.hpp
-    ${SRC_PATH}/ip_header.hpp
-    ${SRC_PATH}/protocols.hpp
-    ${SRC_PATH}/tcp_header.hpp
-    ${SRC_PATH}/udp_header.hpp
-    ${SRC_PATH}/utils.hpp
-    ${SRC_PATH}/session_stats.hpp
-    ${SRC_PATH}/mainwindow.h
-    ${WORKER_PATH}/packet_capture_worker.h
-    ${WORKER_PATH}/callback_timer.hpp
-    ${WORKER_PATH}/ui_reload_worker.hpp
-    ${WORKER_PATH}/inference_worker.hpp
-    ${SRC_PATH}/Chart.h
+    ${SRC_HEADER_PATH}/packet_capture.hpp
+    ${SRC_HEADER_PATH}/packet_capture_engine.hpp
+    ${SRC_HEADER_PATH}/packet_parser.hpp
+    ${SRC_HEADER_PATH}/basic_flow.hpp
+    ${SRC_HEADER_PATH}/basic_packet_info.hpp
+    ${SRC_HEADER_PATH}/flow_features.hpp
+    ${SRC_HEADER_PATH}/flow_generator.hpp
+    ${SRC_HEADER_PATH}/flow_generator_engine.hpp
+    ${SRC_HEADER_PATH}/constants.hpp
+    ${SRC_HEADER_PATH}/ether_header.hpp
+    ${SRC_HEADER_PATH}/ip_header.hpp
+    ${SRC_HEADER_PATH}/protocols.hpp
+    ${SRC_HEADER_PATH}/tcp_header.hpp
+    ${SRC_HEADER_PATH}/udp_header.hpp
+    ${SRC_HEADER_PATH}/utils.hpp
+    ${SRC_HEADER_PATH}/session_stats.hpp
+    ${SRC_HEADER_PATH}/mainwindow.h
+    ${SRC_HEADER_PATH}/packet_capture_worker.h
+    ${SRC_HEADER_PATH}/callback_timer.hpp
+    ${SRC_HEADER_PATH}/ui_reload_worker.hpp
+    ${SRC_HEADER_PATH}/inference_worker.hpp
+    ${SRC_HEADER_PATH}/Chart.h
 )
 
-set (project_headers_mac ${SRC_PATH}/mainwindow.h ${WORKER_PATH}/packet_capture_worker.h ${WORKER_PATH}/ui_reload_worker.hpp ${SRC_PATH}/Chart.h)
+set (project_headers_mac ${SRC_HEADER_PATH}/mainwindow.h ${SRC_HEADER_PATH}/packet_capture_worker.h ${SRC_HEADER_PATH}/ui_reload_worker.hpp ${SRC_HEADER_PATH}/Chart.h)
 
 set(project_ui ${UI_PATH}/mainwindow.ui)
 

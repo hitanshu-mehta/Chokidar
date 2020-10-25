@@ -1,8 +1,8 @@
 #ifndef PACKET_CAPTURE_WORKER_HPP
 #define PACKET_CAPTURE_WORKER_HPP
 
-#include "../database.hpp"
-#include "../packet_capture_engine.hpp"
+#include "database.hpp"
+#include "src/include/packet_capture_engine.hpp"
 
 #include <QObject>
 #include <QString>

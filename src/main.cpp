@@ -1,6 +1,6 @@
-#include "basic_packet_info.hpp"
-#include "flow_generator_engine.hpp"
-#include "packet_capture_engine.hpp"
+#include "src/include/basic_packet_info.hpp"
+#include "src/include/flow_generator_engine.hpp"
+#include "src/include/packet_capture_engine.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -22,7 +22,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
-#include "mainwindow.h"
+#include "src/include/mainwindow.h"
 
 #ifdef WINDOWS
 	#include <direct.h>

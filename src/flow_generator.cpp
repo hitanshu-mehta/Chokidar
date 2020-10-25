@@ -1,4 +1,4 @@
-#include "flow_generator.hpp"
+#include "src/include/flow_generator.hpp"
 #include <fstream>
 
 flow_generator::flow_generator(bool bidirectional, long flow_timeout, long activity_timeout) {

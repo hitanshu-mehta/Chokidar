@@ -1,4 +1,4 @@
-#include "inference_worker.hpp"
+#include "src/include/inference_worker.hpp"
 
 #include <iostream>
 #include <pybind11/embed.h>

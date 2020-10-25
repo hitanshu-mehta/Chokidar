@@ -1,4 +1,4 @@
-#include "bar_chart.hpp"
+#include "src/include/bar_chart.hpp"
 
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QBarSeries>

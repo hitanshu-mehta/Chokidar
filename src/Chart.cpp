@@ -1,4 +1,4 @@
-#include "Chart.h"
+#include "src/include/Chart.h"
 #include <QtCharts/QAbstractAxis>
 
 #include <QtCharts/QSplineSeries>

@@ -1,9 +1,9 @@
 #ifndef FLOW_GENERATOR_HPP
 #define FLOW_GENERATOR_HPP
 
-#include "basic_flow.hpp"
-#include "basic_packet_info.hpp"
 #include "database.hpp"
+#include "src/include/basic_flow.hpp"
+#include "src/include/basic_packet_info.hpp"
 
 #include <map>
 #include <string>
