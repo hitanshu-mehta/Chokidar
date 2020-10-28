@@ -1,4 +1,4 @@
-# Intrusion-Detection-using-machine-learning-techniques
+# anomaly_based_intrusion_detection_system
 This is application is simplified intrusion detection system which using machine
 learning techniques to detect malicious network traffic. It captures real-time network
 traffic data, then it generates flows from this data. Training machine learning model
@@ -18,7 +18,7 @@ to the user.
 * mongodb - [Download page](https://www.mongodb.com/download-center/community)
 ### Linux
 ```
-git clone https://github.com/hitanshu-mehta/Intrusion-Detection-using-machine-learning-techniques.git
+git clone https://github.com/hitanshu-mehta/anomaly_based_intrusion_detection_system.git
 cd Intrusion-Detection-using-machine-learning-techniques
 python3 -m build.py
 ```
