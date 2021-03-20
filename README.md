@@ -1,4 +1,4 @@
-# anomaly_based_intrusion_detection_system
+# Chokidar
 This is application is simplified intrusion detection system which using machine
 learning techniques to detect malicious network traffic. It captures real-time network
 traffic data, then it generates flows from this data. Training machine learning model
